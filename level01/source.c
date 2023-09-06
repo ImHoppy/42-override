@@ -23,7 +23,7 @@ int main(void)
 	bzero(pass, 16);
 	puts("********* ADMIN LOGIN PROMPT *********");
 	printf("Enter Username: ");
-	fgets(&a_user_name, 256, stdin);
+	fgets(a_user_name, 256, stdin);
 	ret = verify_user_name();
 	if (ret == 0)
 	{
