@@ -30,14 +30,10 @@ int main(void)
 		puts("Enter Password: ");
 		fgets(pass, 100, stdin);
 		ret = verify_user_pass(pass);
-		if (ret == 0)
+		if (ret == 0 || ret != 0)
 		{
 			puts("nope, incorrect password...\n");
 			return 1;
-		}
-		else
-		{
-			return 0;
 		}
 	}
 	else
