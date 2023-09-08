@@ -14,7 +14,8 @@ void test(int pass, int param)
 	*/
 	param = param - pass;
 	int num = param; // ebp-0xc
-	if (num > 21)
+	// Bitshift weird stuff check
+	if (num > 0x0 && num <= 0x9 || num >= 0x10 && num < 0x16)
 	{
 		decrypt(rand());
 	}
@@ -36,3 +37,4 @@ int main(void)
 	scanf("%d", &pass);
 	test(pass, 322424845);
 }
+322424845 - 322424829
