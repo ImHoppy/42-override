@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
+#include <string.h>
 
 void decrypt(int num)
 {
@@ -73,7 +74,7 @@ void decrypt(int num)
  8048702:       0f 97 c2                seta   dl
  8048705:       0f 92 c0                setb   al
 	*/
-	const isEqual = strncmp(str, "Congratulations!", 0x11);
+	const int cmpValue = strncmp(str, "Congratulations!", 0x11);
 	/*
  804870a:       28 c1                   sub    cl,al
  804870c:       89 c8                   mov    eax,ecx
@@ -81,7 +82,7 @@ void decrypt(int num)
  8048711:       85 c0                   test   eax,eax
  8048713:       75 0e                   jne    8048723 <decrypt+0xc3>
 	*/
-	if (isEqual)
+	if (cmpValue == 0)
 	{
 		/*
  8048715:       c7 04 24 d4 89 04 08    mov    DWORD PTR [esp],0x80489d4
