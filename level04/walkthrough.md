@@ -71,7 +71,7 @@ Nous devons maintenant trouver l'offset pour injecter le shellcode ainsi que son
 On lance gdb normalement puis on le passe en mode debugging forks child:
 
 ```
-set follow-fork-mode-child
+set follow-fork-mode child
 ```
 
 De la meme maniere qu'auparavant on trouve l'offset a 156 bytes.
