@@ -145,4 +145,3 @@ uid=1004(level04) gid=1004(level04) euid=1005(level05) egid=100(users) groups=10
 cat ~level05/.pass
 3v8QLcN5SAhPaZZfEasfmXdwyR59ktDEMAwHF3aN
 ```
->>>>>>> 882eb52cc0f57d130ddafa48770b0dec8f0dc5d9
