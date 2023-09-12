@@ -112,6 +112,8 @@ Maintenant on va diviser notre adresse en 2 short pour pouvoir l'injecter sinon 
 $ node
 > 0xd8d0
 55504				; les 2 derniers octets en decimal
+> 0xd8d0 - 8		; On enleve 8 pour l'adresse d'exit
+55495
 > 0xffff
 65535				; les 2 premiers octets en decimal
 > 0xffff - 0xd8d0	; les 2 premiers octets moins les 2 derniers deja écrits
