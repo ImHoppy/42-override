@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// ebp + 8 = login, ebp + 12 = serial
 int auth(char *login, unsigned int serial)
 {
 	/*
@@ -12,12 +13,21 @@ int auth(char *login, unsigned int serial)
  8048756: 8b 45 08                      mov     eax, dword ptr [ebp + 8]
  8048759: 89 04 24                      mov     dword ptr [esp], eax
  804875c: e8 bf fd ff ff                call     <strcspn@plt>
+	*/
+	size_t len = strcspn(login, "\n");
+	/*
  8048761: 03 45 08                      add     eax, dword ptr [ebp + 8]
  8048764: c6 00 00                      mov     byte ptr [eax], 0
+	*/
+	login[len] = 0;
+	/*
  8048767: c7 44 24 04 20 00 00 00       mov     dword ptr [esp + 4], 32
  804876f: 8b 45 08                      mov     eax, dword ptr [ebp + 8]
  8048772: 89 04 24                      mov     dword ptr [esp], eax
  8048775: e8 56 fe ff ff                call     <strnlen@plt>
+	*/
+	len = strnlen(login, 32);
+	/*
  804877a: 89 45 f4                      mov     dword ptr [ebp - 12], eax
  804877d: 50                            push    eax
  804877e: 31 c0                         xor     eax, eax
@@ -122,9 +132,9 @@ int main(void)
 	// esp+80 - esp+76 = 4
 	int ret = 0; // esp+76
 	// esp+76 - esp+44 = 32
-	char buffer[32]; // esp+44
+	char login[32]; // esp+44
 	// esp+44 - esp+40 = 4
-	int undefined1; // esp+40
+	unsigned int serial; // esp+40
 	// esp+40 - esp+36 = 4
 	/*
 <L0>:
@@ -158,7 +168,7 @@ int main(void)
 	puts("*\t\tlevel06\t\t  *");
 	puts("***********************************");
 	printf("-> Enter Login: ");
-	fgets(buffer, 32, stdin);
+	fgets(login, 32, stdin);
 	puts("***********************************");
 	puts("***** NEW ACCOUNT DETECTED ********");
 	puts("***********************************");
@@ -169,6 +179,9 @@ int main(void)
  8048926: 89 54 24 04                   mov     dword ptr [esp + 4], edx
  804892a: 89 04 24                      mov     dword ptr [esp], eax
  804892d: e8 ae fc ff ff                call     <__isoc99_scanf@plt>
+	*/
+	scanf("%u", &serial);
+	/*
  8048932: 8b 44 24 28                   mov     eax, dword ptr [esp+40]
  8048936: 89 44 24 04                   mov     dword ptr [esp + 4], eax
  804893a: 8d 44 24 2c                   lea     eax, [esp + 44]
@@ -177,13 +190,17 @@ int main(void)
  8048946: 85 c0                         test    eax, eax
  8048948: 75 1f                         jne      <L1>
 	*/
-	if (auth(buffer, undefined1) == 0)
+	if (auth(login, serial) == 0)
 	{
 		/*
  804894a: c7 04 24 52 8b 04 08          mov     dword ptr [esp], 134515538
  8048951: e8 3a fc ff ff                call     <puts@plt>
  8048956: c7 04 24 61 8b 04 08          mov     dword ptr [esp], 134515553
  804895d: e8 3e fc ff ff                call     <system@plt>
+		*/
+		puts("Authenticated!");
+		system("/bin/sh");
+		/*
  8048962: b8 00 00 00 00                mov     eax, 0
  8048967: eb 05                         jmp      <L2>
 		*/
