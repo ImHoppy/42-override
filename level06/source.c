@@ -2,6 +2,10 @@
 #include <stdlib.h>
 #include <sys/ptrace.h>
 
+/*
+ */
+/*
+ */
 // ebp + 8 = login, ebp + 12 = serial
 int auth(char *login, unsigned int serial)
 {
@@ -14,13 +18,10 @@ int auth(char *login, unsigned int serial)
  8048756: 8b 45 08                      mov     eax, dword ptr [ebp + 8]
  8048759: 89 04 24                      mov     dword ptr [esp], eax
  804875c: e8 bf fd ff ff                call     <strcspn@plt>
-	*/
-	size_t len = strcspn(login, "\n");
-	/*
  8048761: 03 45 08                      add     eax, dword ptr [ebp + 8]
  8048764: c6 00 00                      mov     byte ptr [eax], 0
 	*/
-	login[len] = 0;
+	login[strcspn(login, "\n")] = 0;
 	/*
  8048767: c7 44 24 04 20 00 00 00       mov     dword ptr [esp + 4], 32
  804876f: 8b 45 08                      mov     eax, dword ptr [ebp + 8]
@@ -28,7 +29,7 @@ int auth(char *login, unsigned int serial)
  8048775: e8 56 fe ff ff                call     <strnlen@plt>
  804877a: 89 45 f4                      mov     dword ptr [ebp - 12], eax
 	*/
-	len = strnlen(login, 32);
+	size_t len = strnlen(login, 32); // ebp - 12
 	/*
  804877d: 50                            push    eax
  804877e: 31 c0                         xor     eax, eax
@@ -88,24 +89,19 @@ int auth(char *login, unsigned int serial)
  80487f9: 35 37 13 00 00                xor     eax, 4919
  80487fe: 05 ed ed 5e 00                add     eax, 6221293
  8048803: 89 45 f0                      mov     dword ptr [ebp - 16], eax
+			*/
+			int value = (login[3] ^ 4919) + 6221293; // ebp - 16
+
+			/*
  8048806: c7 45 ec 00 00 00 00          mov     dword ptr [ebp - 20], 0
  804880d: eb 4c                         jmp      <L4>
 			*/
-			char eax = login[3];
-			eax ^= 4949;
-			eax += 6221293;
-			int edx = eax;
-			int i = 0;
+			int i = 0; // ebp - 20
 			/*
-			<L4>:
+<L4>:
  804885b: 8b 45 ec                      mov     eax, dword ptr [ebp - 20]
  804885e: 3b 45 f4                      cmp     eax, dword ptr [ebp - 12]
  8048861: 7c ac                         jl       <L6>
- 8048863: 8b 45 0c                      mov     eax, dword ptr [ebp + 12]
- 8048866: 3b 45 f0                      cmp     eax, dword ptr [ebp - 16]
- 8048869: 74 07                         je       <L7>
- 804886b: b8 01 00 00 00                mov     eax, 1
- 8048870: eb 05                         jmp      <L2>
 			*/
 			while (i < len)
 			{
@@ -116,36 +112,53 @@ int auth(char *login, unsigned int serial)
  8048815: 0f b6 00                      movzx   eax, byte ptr [eax]
  8048818: 3c 1f                         cmp     al, 31
  804881a: 7f 07                         jg       <L5>
- 804881c: b8 01 00 00 00                mov     eax, 1
- 8048821: eb 54                         jmp      <L2>
 				*/
 				if (login[i] > 31)
 				{
 					/*
 <L5>:
- 8048823: 8b 45 ec                      mov     eax, dword ptr [ebp - 20]
- 8048826: 03 45 08                      add     eax, dword ptr [ebp + 8]
+ 8048823: 8b 45 ec                      mov     eax, dword ptr [ebp - 20]		; eax = i
+ 8048826: 03 45 08                      add     eax, dword ptr [ebp + 8]		; eax = login[i]
  8048829: 0f b6 00                      movzx   eax, byte ptr [eax]
  804882c: 0f be c0                      movsx   eax, al
- 804882f: 89 c1                         mov     ecx, eax
- 8048831: 33 4d f0                      xor     ecx, dword ptr [ebp - 16]
- 8048834: ba 2b 3b 23 88                mov     edx, 2284010283
- 8048839: 89 c8                         mov     eax, ecx
- 804883b: f7 e2                         mul     edx
- 804883d: 89 c8                         mov     eax, ecx
- 804883f: 29 d0                         sub     eax, edx
- 8048841: d1 e8                         shr     eax
- 8048843: 01 d0                         add     eax, edx
- 8048845: c1 e8 0a                      shr     eax, 10
- 8048848: 69 c0 39 05 00 00             imul    eax, eax, 1337
- 804884e: 89 ca                         mov     edx, ecx
- 8048850: 29 c2                         sub     edx, eax
- 8048852: 89 d0                         mov     eax, edx
+ 804882f: 89 c1                         mov     ecx, eax						; ecx = login[i]
+ 8048831: 33 4d f0                      xor     ecx, dword ptr [ebp - 16]		; ecx ^= value
+ 8048834: ba 2b 3b 23 88                mov     edx, 2284010283					; edx = 2284010283
+ 8048839: 89 c8                         mov     eax, ecx						; eax = ecx
+ 804883b: f7 e2                         mul     edx								; eax *= edx
+ 804883d: 89 c8                         mov     eax, ecx						; eax = ecx
+ 804883f: 29 d0                         sub     eax, edx						; eax -= edx
+ 8048841: d1 e8                         shr     eax								; eax >>= 1
+ 8048843: 01 d0                         add     eax, edx						; eax += edx
+ 8048845: c1 e8 0a                      shr     eax, 10							; eax >>= 10
+ 8048848: 69 c0 39 05 00 00             imul    eax, eax, 1337					; eax *= 1337
+ 804884e: 89 ca                         mov     edx, ecx						; edx = ecx
+ 8048850: 29 c2                         sub     edx, eax						; edx -= eax
+ 8048852: 89 d0                         mov     eax, edx						; eax = edx
  8048854: 01 45 f0                      add     dword ptr [ebp - 16], eax
+					*/
+					value += hash(login[i], value);
+					/*
  8048857: 83 45 ec 01                   add     dword ptr [ebp - 20], 1
 					*/
+					i += 1;
+				}
+				else
+				{
+					/*
+ 804881c: b8 01 00 00 00                mov     eax, 1
+ 8048821: eb 54                         jmp      <L2>
+					*/
+					return 1;
 				}
 			}
+			/*
+ 8048863: 8b 45 0c                      mov     eax, dword ptr [ebp + 12]
+ 8048866: 3b 45 f0                      cmp     eax, dword ptr [ebp - 16]
+ 8048869: 74 07                         je       <L7>
+ 804886b: b8 01 00 00 00                mov     eax, 1
+ 8048870: eb 05                         jmp      <L2>
+			*/
 		}
 	}
 	/*
