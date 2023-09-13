@@ -90,7 +90,7 @@ int auth(char *login, unsigned int serial)
  80487fe: 05 ed ed 5e 00                add     eax, 6221293
  8048803: 89 45 f0                      mov     dword ptr [ebp - 16], eax
 			*/
-			int value = (login[3] ^ 4919) + 6221293; // ebp - 16
+			int seed = (login[3] ^ 4919) + 6221293; // ebp - 16
 
 			/*
  8048806: c7 45 ec 00 00 00 00          mov     dword ptr [ebp - 20], 0
@@ -122,7 +122,7 @@ int auth(char *login, unsigned int serial)
  8048829: 0f b6 00                      movzx   eax, byte ptr [eax]
  804882c: 0f be c0                      movsx   eax, al
  804882f: 89 c1                         mov     ecx, eax						; ecx = login[i]
- 8048831: 33 4d f0                      xor     ecx, dword ptr [ebp - 16]		; ecx ^= value
+ 8048831: 33 4d f0                      xor     ecx, dword ptr [ebp - 16]		; ecx ^= seed
  8048834: ba 2b 3b 23 88                mov     edx, 2284010283					; edx = 2284010283
  8048839: 89 c8                         mov     eax, ecx						; eax = ecx
  804883b: f7 e2                         mul     edx								; eax *= edx
@@ -137,7 +137,7 @@ int auth(char *login, unsigned int serial)
  8048852: 89 d0                         mov     eax, edx						; eax = edx
  8048854: 01 45 f0                      add     dword ptr [ebp - 16], eax
 					*/
-					value += hash(login[i], value);
+					seed += hash(login[i], seed); // (login[i] ^ seed) - (((((login[i] ^ seed) - 2284010283) >> 1) + 2284010283) >> 10) * 1337
 					/*
  8048857: 83 45 ec 01                   add     dword ptr [ebp - 20], 1
 					*/
@@ -156,24 +156,25 @@ int auth(char *login, unsigned int serial)
  8048863: 8b 45 0c                      mov     eax, dword ptr [ebp + 12]
  8048866: 3b 45 f0                      cmp     eax, dword ptr [ebp - 16]
  8048869: 74 07                         je       <L7>
+			*/
+			if (serial == seed)
+			{
+				/*
+ 8048869: 74 07                         je       <L7>
+				*/
+				return 0;
+			}
+			else
+			{
+				/*
  804886b: b8 01 00 00 00                mov     eax, 1
  8048870: eb 05                         jmp      <L2>
-			*/
+				*/
+				return 1;
+			}
 		}
 	}
 	/*
-<L3>:
- 80487ed: 8b 45 08                      mov     eax, dword ptr [ebp + 8]
- 80487f0: 83 c0 03                      add     eax, 3
- 80487f3: 0f b6 00                      movzx   eax, byte ptr [eax]
- 80487f6: 0f be c0                      movsx   eax, al
- 80487f9: 35 37 13 00 00                xor     eax, 4919
- 80487fe: 05 ed ed 5e 00                add     eax, 6221293
- 8048803: 89 45 f0                      mov     dword ptr [ebp - 16], eax
- 8048806: c7 45 ec 00 00 00 00          mov     dword ptr [ebp - 20], 0
- 804880d: eb 4c                         jmp      <L4>
-
-
 <L7>:
  8048872: b8 00 00 00 00                mov     eax, 0
 <L2>:
