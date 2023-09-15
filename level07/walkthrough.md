@@ -49,4 +49,4 @@ Input command: quit
 Ce programme nous permet de stocker des nombres dans un tableau. Cependant, certains case sont réservées pour `wil`.<br />
 On peut voir que le programme utilise des entiers non signés pour stocker les index. Cela signifie que si on rentre un index négatif, il sera converti en un entier non signé. Par exemple, `-1` deviendra `4294967295` (2^32 - 1).
 
-À partir de là, on peut commencer à reverse
+Après avoir disassemblé le programme, on sait que le tableau a une taille de 100 nombres mais il n'y a pas de check sur l'index.

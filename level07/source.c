@@ -1,3 +1,7 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 /*
 08048630 <store_number>:
  8048630: 55                            push    ebp
@@ -78,8 +82,7 @@
 */
 int main(int ac, char **av, char **env)
 {
-}
-/*
+	/*
 08048723 <main>:
  8048723: 55                            push    ebp
  8048724: 89 e5                         mov     ebp, esp
@@ -96,27 +99,39 @@ int main(int ac, char **av, char **env)
  8048746: 89 84 24 cc 01 00 00          mov     dword ptr [esp + 460], eax
  804874d: 31 c0                         xor     eax, eax
  804874f: c7 84 24 b4 01 00 00 00 00 00 00      mov     dword ptr [esp + 436], 0
-*/
-int ret = 0; // esp + 436
-/*
+	*/
+	int ret = 0; // esp + 436
+	/*
  804875a: c7 84 24 b8 01 00 00 00 00 00 00      mov     dword ptr [esp + 440], 0
-*/
-char line[20] = {0}; // esp + 440
-/*
+	*/
+	char line[20] = {0}; // esp + 440
+	/*
  8048765: c7 84 24 bc 01 00 00 00 00 00 00      mov     dword ptr [esp + 444], 0
  8048770: c7 84 24 c0 01 00 00 00 00 00 00      mov     dword ptr [esp + 448], 0
  804877b: c7 84 24 c4 01 00 00 00 00 00 00      mov     dword ptr [esp + 452], 0
  8048786: c7 84 24 c8 01 00 00 00 00 00 00      mov     dword ptr [esp + 456], 0
-*/
-int line[100] = {0}; // esp + 36
-/*
+
  8048791: 8d 5c 24 24                   lea     ebx, [esp + 36]
  8048795: b8 00 00 00 00                mov     eax, 0
  804879a: ba 64 00 00 00                mov     edx, 100
  804879f: 89 df                         mov     edi, ebx
  80487a1: 89 d1                         mov     ecx, edx
  80487a3: f3 ab                         rep             stosd   dword ptr es:[edi], eax
+	*/
+	int stockage[100]; // esp + 36
+	bzero(stockage, 100);
+	/*
  80487a5: eb 43                         jmp      <L0>
+<L0>:
+ 80487ea: 8b 44 24 1c                   mov     eax, dword ptr [esp + 28]
+ 80487ee: 8b 00                         mov     eax, dword ptr [eax]
+ 80487f0: 85 c0                         test    eax, eax
+ 80487f2: 75 b3                         jne      <L1>
+ 80487f4: eb 43                         jmp      <L2>
+	*/
+	while (*av)
+	{
+		/*
 <L1>:
  80487a7: 8b 44 24 1c                   mov     eax, dword ptr [esp + 28]
  80487ab: 8b 00                         mov     eax, dword ptr [eax]
@@ -126,6 +141,9 @@ int line[100] = {0}; // esp + 36
  80487bc: 8b 4c 24 14                   mov     ecx, dword ptr [esp + 20]
  80487c0: 89 d7                         mov     edi, edx
  80487c2: f2 ae                         repne           scasb   al, byte ptr es:[edi]
+		*/
+		size_t len = strlen(*av);
+		/*
  80487c4: 89 c8                         mov     eax, ecx
  80487c6: f7 d0                         not     eax
  80487c8: 8d 50 ff                      lea     edx, [eax - 1]
@@ -135,14 +153,25 @@ int line[100] = {0}; // esp + 36
  80487d5: c7 44 24 04 00 00 00 00       mov     dword ptr [esp + 4], 0
  80487dd: 89 04 24                      mov     dword ptr [esp], eax
  80487e0: e8 0b fd ff ff                call     <memset@plt>
+		*/
+		memset(*av, 0, len - 1);
+		/*
  80487e5: 83 44 24 1c 04                add     dword ptr [esp + 28], 4
-<L0>:
- 80487ea: 8b 44 24 1c                   mov     eax, dword ptr [esp + 28]
- 80487ee: 8b 00                         mov     eax, dword ptr [eax]
- 80487f0: 85 c0                         test    eax, eax
- 80487f2: 75 b3                         jne      <L1>
- 80487f4: eb 43                         jmp      <L2>
- <L3>:
+		*/
+		++av;
+	}
+
+	/*
+<L2>:
+ 8048839: 8b 44 24 18                   mov     eax, dword ptr [esp + 24]
+ 804883d: 8b 00                         mov     eax, dword ptr [eax]
+ 804883f: 85 c0                         test    eax, eax
+ 8048841: 75 b3                         jne      <L3>
+	*/
+	while (*env)
+	{
+		/*
+<L3>:
  80487f6: 8b 44 24 18                   mov     eax, dword ptr [esp + 24]
  80487fa: 8b 00                         mov     eax, dword ptr [eax]
  80487fc: c7 44 24 14 ff ff ff ff       mov     dword ptr [esp + 20], 4294967295
@@ -151,6 +180,9 @@ int line[100] = {0}; // esp + 36
  804880b: 8b 4c 24 14                   mov     ecx, dword ptr [esp + 20]
  804880f: 89 d7                         mov     edi, edx
  8048811: f2 ae                         repne           scasb   al, byte ptr es:[edi]
+		*/
+		size_t len = strlen(*env);
+		/*
  8048813: 89 c8                         mov     eax, ecx
  8048815: f7 d0                         not     eax
  8048817: 8d 50 ff                      lea     edx, [eax - 1]
@@ -160,14 +192,29 @@ int line[100] = {0}; // esp + 36
  8048824: c7 44 24 04 00 00 00 00       mov     dword ptr [esp + 4], 0
  804882c: 89 04 24                      mov     dword ptr [esp], eax
  804882f: e8 bc fc ff ff                call     <memset@plt>
+		*/
+		memset(*env, 0, len - 1);
+		/*
  8048834: 83 44 24 18 04                add     dword ptr [esp + 24], 4
-<L2>:
- 8048839: 8b 44 24 18                   mov     eax, dword ptr [esp + 24]
- 804883d: 8b 00                         mov     eax, dword ptr [eax]
- 804883f: 85 c0                         test    eax, eax
- 8048841: 75 b3                         jne      <L3>
+		*/
+		++env;
+	}
+	/*
  8048843: c7 04 24 38 8b 04 08          mov     dword ptr [esp], 134515512
  804884a: e8 71 fc ff ff                call     <puts@plt>
+	*/
+	puts(
+		"----------------------------------------------------\n"
+		"  Welcome to wil's crappy number storage service!   \n"
+		"----------------------------------------------------\n"
+		" Commands:                                          \n"
+		"    store - store a number into the data storage    \n"
+		"    read  - read a number from the data storage     \n"
+		"    quit  - exit the program                        \n"
+		"----------------------------------------------------\n"
+		"   wil has reserved some storage :>                 \n"
+		"----------------------------------------------------\n");
+	/*
 <L10>:
  804884f: b8 4b 8d 04 08                mov     eax, 134516043
  8048854: 89 04 24                      mov     dword ptr [esp], eax
@@ -273,10 +320,7 @@ int line[100] = {0}; // esp + 36
  80489ca: e9 80 fe ff ff                jmp      <L10>
 <L7>:
  80489cf: 90                            nop
- 80489d0: b8 00 00 00 00                mov     eax, 0
- 80489d5: 8b b4 24 cc 01 00 00          mov     esi, dword ptr [esp + 460]
- 80489dc: 65 33 35 14 00 00 00          xor     esi, dword ptr gs:[20]
- 80489e3: 74 05                         je       <L11>
- 80489e5: e8 c6 fa ff ff                call     <__stack_chk_fail@plt>
 <L11>:
-*/
+	*/
+	return 0;
+}
