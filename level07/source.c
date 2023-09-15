@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 /*
 08048630 <store_number>:
@@ -104,7 +105,7 @@ int main(int ac, char **av, char **env)
 	/*
  804875a: c7 84 24 b8 01 00 00 00 00 00 00      mov     dword ptr [esp + 440], 0
 	*/
-	char line[20] = {0}; // esp + 440
+	char line[20] = {0}; // esp + 440 (+ 4)
 	/*
  8048765: c7 84 24 bc 01 00 00 00 00 00 00      mov     dword ptr [esp + 444], 0
  8048770: c7 84 24 c0 01 00 00 00 00 00 00      mov     dword ptr [esp + 448], 0
@@ -214,18 +215,29 @@ int main(int ac, char **av, char **env)
 		"----------------------------------------------------\n"
 		"   wil has reserved some storage :>                 \n"
 		"----------------------------------------------------\n");
-	/*
+	do
+	{
+		/*
 <L10>:
  804884f: b8 4b 8d 04 08                mov     eax, 134516043
  8048854: 89 04 24                      mov     dword ptr [esp], eax
  8048857: e8 14 fc ff ff                call     <printf@plt>
+		*/
+		printf("Input command: ");
+		/*
  804885c: c7 84 24 b4 01 00 00 01 00 00 00      mov     dword ptr [esp + 436], 1
+		*/
+		ret = 1;
+		/*
  8048867: a1 40 a0 04 08                mov     eax, dword ptr [134520896]
  804886c: 89 44 24 08                   mov     dword ptr [esp + 8], eax
  8048870: c7 44 24 04 14 00 00 00       mov     dword ptr [esp + 4], 20
  8048878: 8d 84 24 b8 01 00 00          lea     eax, [esp + 440]
  804887f: 89 04 24                      mov     dword ptr [esp], eax
  8048882: e8 19 fc ff ff                call     <fgets@plt>
+		*/
+		fgets(line, 20, stdin);
+		/*
  8048887: 8d 84 24 b8 01 00 00          lea     eax, [esp + 440]
  804888e: c7 44 24 14 ff ff ff ff       mov     dword ptr [esp + 20], 4294967295
  8048896: 89 c2                         mov     edx, eax
@@ -238,6 +250,9 @@ int main(int ac, char **av, char **env)
  80488a9: 83 e8 01                      sub     eax, 1
  80488ac: 83 e8 01                      sub     eax, 1
  80488af: c6 84 04 b8 01 00 00 00       mov     byte ptr [esp + eax + 440], 0
+		*/
+		line[strlen(line) - 2] = 0;
+		/*
  80488b7: 8d 84 24 b8 01 00 00          lea     eax, [esp + 440]
  80488be: 89 c2                         mov     edx, eax
  80488c0: b8 5b 8d 04 08                mov     eax, 134516059
@@ -253,11 +268,19 @@ int main(int ac, char **av, char **env)
  80488dc: 0f be c0                      movsx   eax, al
  80488df: 85 c0                         test    eax, eax
  80488e1: 75 15                         jne      <L4>
+		*/
+		if (strncmp(line, "store", 5) == 0)
+		{
+			/*
  80488e3: 8d 44 24 24                   lea     eax, [esp + 36]
  80488e7: 89 04 24                      mov     dword ptr [esp], eax
  80488ea: e8 41 fd ff ff                call     <store_number>
  80488ef: 89 84 24 b4 01 00 00          mov     dword ptr [esp + 436], eax
  80488f6: eb 6d                         jmp      <L5>
+			*/
+			ret = store_number(stockage);
+		}
+		/*
  <L4>:
  80488f8: 8d 84 24 b8 01 00 00          lea     eax, [esp + 440]
  80488ff: 89 c2                         mov     edx, eax
@@ -274,11 +297,19 @@ int main(int ac, char **av, char **env)
  804891d: 0f be c0                      movsx   eax, al
  8048920: 85 c0                         test    eax, eax
  8048922: 75 15                         jne      <L6>
+		*/
+		else if (strncmp(line, "read", 4) == 0)
+		{
+			/*
  8048924: 8d 44 24 24                   lea     eax, [esp + 36]
  8048928: 89 04 24                      mov     dword ptr [esp], eax
  804892b: e8 a7 fd ff ff                call     <read_number>
  8048930: 89 84 24 b4 01 00 00          mov     dword ptr [esp + 436], eax
  8048937: eb 2c                         jmp      <L5>
+			*/
+			ret = read_number(stockage);
+		}
+		/*
 <L6>:
  8048939: 8d 84 24 b8 01 00 00          lea     eax, [esp + 440]
  8048940: 89 c2                         mov     edx, eax
@@ -295,21 +326,41 @@ int main(int ac, char **av, char **env)
  804895e: 0f be c0                      movsx   eax, al
  8048961: 85 c0                         test    eax, eax
  8048963: 74 6a                         je       <L7>
+			*/
+		else if (strncmp(line, "quit", 4) == 0)
+		{
+			return 0;
+		}
+		/*
 <L5>:
  8048965: 83 bc 24 b4 01 00 00 00       cmp     dword ptr [esp + 436], 0
  804896d: 74 1a                         je       <L8>
+		*/
+		if (ret != 0)
+		{
+			/*
  804896f: b8 6b 8d 04 08                mov     eax, 134516075
  8048974: 8d 94 24 b8 01 00 00          lea     edx, [esp + 440]
  804897b: 89 54 24 04                   mov     dword ptr [esp + 4], edx
  804897f: 89 04 24                      mov     dword ptr [esp], eax
  8048982: e8 e9 fa ff ff                call     <printf@plt>
  8048987: eb 18                         jmp      <L9>
+			*/
+			printf(" Completed %s command successfully\n", line);
+		}
+		else
+		{
+			/*
 <L8>:
  8048989: b8 88 8d 04 08                mov     eax, 134516104
  804898e: 8d 94 24 b8 01 00 00          lea     edx, [esp + 440]
  8048995: 89 54 24 04                   mov     dword ptr [esp + 4], edx
  8048999: 89 04 24                      mov     dword ptr [esp], eax
  804899c: e8 cf fa ff ff                call     <printf@plt>
+			*/
+			printf(" Failed to do %s command\n", line);
+		}
+		/*
 <L9>:
  80489a1: 8d 84 24 b8 01 00 00          lea     eax, [esp + 440]
  80489a8: c7 00 00 00 00 00             mov     dword ptr [eax], 0
@@ -318,6 +369,10 @@ int main(int ac, char **av, char **env)
  80489bc: c7 40 0c 00 00 00 00          mov     dword ptr [eax + 12], 0
  80489c3: c7 40 10 00 00 00 00          mov     dword ptr [eax + 16], 0
  80489ca: e9 80 fe ff ff                jmp      <L10>
+		*/
+		bzero(line, 20);
+	} while (true);
+	/*
 <L7>:
  80489cf: 90                            nop
 <L11>:
