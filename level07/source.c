@@ -3,7 +3,18 @@
 #include <string.h>
 #include <stdbool.h>
 
-/*
+unsigned int get_unum()
+{
+	unsigned int input;
+	fflush(stdout);
+	scanf("%u", input);
+	clear_stdin();
+	return input;
+}
+
+int store_number(int *stockage)
+{
+	/*
 08048630 <store_number>:
  8048630: 55                            push    ebp
  8048631: 89 e5                         mov     ebp, esp
@@ -55,18 +66,31 @@
 <L2>:
  80486d5: c9                            leave
  80486d6: c3                            ret
-*/
-/*
-080486d7 <read_number>:
+	*/
+}
+
+int read_number(int stockage[])
+{
+	/*
+ 080486d7 <read_number>:
  80486d7: 55                            push    ebp
  80486d8: 89 e5                         mov     ebp, esp
  80486da: 83 ec 28                      sub     esp, 40
  80486dd: c7 45 f4 00 00 00 00          mov     dword ptr [ebp - 12], 0
+	*/
+	unsigned int input = 0; // ebp - 12
+	/*
  80486e4: b8 dd 8a 04 08                mov     eax, 134515421
  80486e9: 89 04 24                      mov     dword ptr [esp], eax
  80486ec: e8 7f fd ff ff                call     <printf@plt>
+	*/
+	printf(" Index: ");
+	/*
  80486f1: e8 f1 fe ff ff                call     <get_unum>
  80486f6: 89 45 f4                      mov     dword ptr [ebp - 12], eax
+	*/
+	input = get_unum();
+	/*
  80486f9: 8b 45 f4                      mov     eax, dword ptr [ebp - 12]
  80486fc: c1 e0 02                      shl     eax, 2
  80486ff: 03 45 08                      add     eax, dword ptr [ebp + 8]
@@ -77,10 +101,16 @@
  8048710: 89 54 24 04                   mov     dword ptr [esp + 4], edx
  8048714: 89 04 24                      mov     dword ptr [esp], eax
  8048717: e8 54 fd ff ff                call     <printf@plt>
+	*/
+	printf(" Number at data[%u] is %u\n", input, stockage[input]);
+	/*
  804871c: b8 00 00 00 00                mov     eax, 0
  8048721: c9                            leave
  8048722: c3                            ret
-*/
+	*/
+	return 0;
+}
+
 int main(int ac, char **av, char **env)
 {
 	/*
