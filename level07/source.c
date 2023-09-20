@@ -24,45 +24,83 @@ int store_number(int *stockage)
  8048644: b8 d3 8a 04 08                mov     eax, 134515411
  8048649: 89 04 24                      mov     dword ptr [esp], eax
  804864c: e8 1f fe ff ff                call     <printf@plt>
+	*/
+	printf(" Number: ");
+	/*
  8048651: e8 91 ff ff ff                call     <get_unum>
  8048656: 89 45 f0                      mov     dword ptr [ebp - 16], eax
+	*/
+	unsigned int number = get_unum(); // ebp - 16
+	/*
  8048659: b8 dd 8a 04 08                mov     eax, 134515421
  804865e: 89 04 24                      mov     dword ptr [esp], eax
  8048661: e8 0a fe ff ff                call     <printf@plt>
+	*/
+	printf(" Index: ");
+	/*
  8048666: e8 7c ff ff ff                call     <get_unum>
  804866b: 89 45 f4                      mov     dword ptr [ebp - 12], eax
+	*/
+	unsigned int index = get_unum(); // ebp - 12
+	/*
  804866e: 8b 4d f4                      mov     ecx, dword ptr [ebp - 12]
  8048671: ba ab aa aa aa                mov     edx, 2863311531
  8048676: 89 c8                         mov     eax, ecx
- 8048678: f7 e2                         mul     edx
- 804867a: d1 ea                         shr     edx
- 804867c: 89 d0                         mov     eax, edx
- 804867e: 01 c0                         add     eax, eax
- 8048680: 01 d0                         add     eax, edx
- 8048682: 89 ca                         mov     edx, ecx
- 8048684: 29 c2                         sub     edx, eax
- 8048686: 85 d2                         test    edx, edx
+ 8048678: f7 e2                         mul     edx ; index * 2863311531
+ 804867a: d1 ea                         shr     edx ; edx = index / 2
+ 804867c: 89 d0                         mov     eax, edx ; eax = edx
+ 804867e: 01 c0                         add     eax, eax ; eax = edx * 2
+ 8048680: 01 d0                         add     eax, edx ; eax = edx * 3
+ 8048682: 89 ca                         mov     edx, ecx ; edx = index
+ 8048684: 29 c2                         sub     edx, eax ; edx = index - (edx * 3)
+ 8048686: 85 d2                         test    edx, edx ; edx == 0
  8048688: 74 0d                         je       <L0>
  804868a: 8b 45 f0                      mov     eax, dword ptr [ebp - 16]
  804868d: c1 e8 18                      shr     eax, 24
  8048690: 3d b7 00 00 00                cmp     eax, 183
  8048695: 75 2b                         jne      <L1>
+	*/
+	if (index % 3 == 0 || (number >> 24) == 183)
+	{
+		/*
 <L0>:
  8048697: c7 04 24 e6 8a 04 08          mov     dword ptr [esp], 134515430
  804869e: e8 1d fe ff ff                call     <puts@plt>
+		*/
+		puts(" *** ERROR! ***");
+		/*
  80486a3: c7 04 24 f8 8a 04 08          mov     dword ptr [esp], 134515448
  80486aa: e8 11 fe ff ff                call     <puts@plt>
+		*/
+		puts("   This index is reserved for wil!");
+		/*
  80486af: c7 04 24 e6 8a 04 08          mov     dword ptr [esp], 134515430
  80486b6: e8 05 fe ff ff                call     <puts@plt>
+		*/
+		puts(" *** ERROR! ***");
+		/*
  80486bb: b8 01 00 00 00                mov     eax, 1
  80486c0: eb 13                         jmp      <L2>
+		*/
+		return 1;
+	}
+	else
+	{
+		/*
 <L1>:
  80486c2: 8b 45 f4                      mov     eax, dword ptr [ebp - 12]
  80486c5: c1 e0 02                      shl     eax, 2
  80486c8: 03 45 08                      add     eax, dword ptr [ebp + 8]
  80486cb: 8b 55 f0                      mov     edx, dword ptr [ebp - 16]
  80486ce: 89 10                         mov     dword ptr [eax], edx
+		*/
+		stockage[index] = number;
+	}
+	/*
  80486d0: b8 00 00 00 00                mov     eax, 0
+	*/
+	return 0;
+	/*
 <L2>:
  80486d5: c9                            leave
  80486d6: c3                            ret
