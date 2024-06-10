@@ -482,7 +482,7 @@ int main(int ac, char **av, char **env)
  8048982: e8 e9 fa ff ff                call     <printf@plt>
  8048987: eb 18                         jmp      <L9>
 			*/
-			printf(" Completed %s command successfully\n", line);
+			printf(" Failed to do %s command\n", line);
 		}
 		else
 		{
@@ -494,7 +494,7 @@ int main(int ac, char **av, char **env)
  8048999: 89 04 24                      mov     dword ptr [esp], eax
  804899c: e8 cf fa ff ff                call     <printf@plt>
 			*/
-			printf(" Failed to do %s command\n", line);
+			printf(" Completed %s command successfully\n", line);
 		}
 		/*
 <L9>:
