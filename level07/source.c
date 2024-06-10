@@ -89,6 +89,8 @@ int store_number(int *stockage)
  8048633: 83 ec 28                      sub     esp, 40
  8048636: c7 45 f0 00 00 00 00          mov     dword ptr [ebp - 16], 0
  804863d: c7 45 f4 00 00 00 00          mov     dword ptr [ebp - 12], 0
+	*/
+	/*
  8048644: b8 d3 8a 04 08                mov     eax, 134515411
  8048649: 89 04 24                      mov     dword ptr [esp], eax
  804864c: e8 1f fe ff ff                call     <printf@plt>
@@ -156,9 +158,9 @@ int store_number(int *stockage)
 	{
 		/*
 <L1>:
- 80486c2: 8b 45 f4                      mov     eax, dword ptr [ebp - 12]
- 80486c5: c1 e0 02                      shl     eax, 2
- 80486c8: 03 45 08                      add     eax, dword ptr [ebp + 8]
+ 80486c2: 8b 45 f4                      mov     eax, dword ptr [ebp - 12]		; INDEX
+ 80486c5: c1 e0 02                      shl     eax, 2							; INDEX * 4
+ 80486c8: 03 45 08                      add     eax, dword ptr [ebp + 8]		; INDEX + STOCKAGE
  80486cb: 8b 55 f0                      mov     edx, dword ptr [ebp - 16]
  80486ce: 89 10                         mov     dword ptr [eax], edx
 		*/
@@ -255,7 +257,7 @@ int main(int ac, char **av, char **env)
  80487a1: 89 d1                         mov     ecx, edx
  80487a3: f3 ab                         rep             stosd   dword ptr es:[edi], eax
 	*/
-	int stockage[100]; // esp + 36
+	unsigned int stockage[100]; // esp + 36
 	bzero(stockage, 100);
 	/*
  80487a5: eb 43                         jmp      <L0>
