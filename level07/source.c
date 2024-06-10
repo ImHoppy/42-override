@@ -3,12 +3,80 @@
 #include <string.h>
 #include <stdbool.h>
 
+void clear_stdin(void)
+{
+	/*
+080485c4 <clear_stdin>:
+ 80485c4: 55                            push    ebp
+ 80485c5: 89 e5                         mov     ebp, esp
+ 80485c7: 83 ec 18                      sub     esp, 24
+ 80485ca: c6 45 f7 00                   mov     byte ptr [ebp - 9], 0
+	*/
+	char c = 0; // ebp - 9
+	/*
+ 80485ce: eb 01                         jmp      <L0>
+<L2>:
+ 80485d0: 90                            nop
+	*/
+	do
+	{
+		/*
+<L0>:
+ 80485d1: e8 ba fe ff ff                call     <getchar@plt>
+ 80485d6: 88 45 f7                      mov     byte ptr [ebp - 9], al
+		*/
+		c = getchar();
+		/*
+ 80485d9: 80 7d f7 0a                   cmp     byte ptr [ebp - 9], 10
+ 80485dd: 74 06                         je       <L1>
+		*/
+		if (c == '\n')
+			return;
+		/*
+ 80485df: 80 7d f7 ff                   cmp     byte ptr [ebp - 9], -1
+ 80485e3: 75 eb                         jne      <L2>
+		*/
+	} while (c != -1);
+	/*
+<L1>:
+ 80485e5: c9                            leave
+ 80485e6: c3                            ret
+	*/
+}
+
 unsigned int get_unum()
 {
-	unsigned int input;
+	/*
+080485e7 <get_unum>:
+ 80485e7: 55                            push    ebp
+ 80485e8: 89 e5                         mov     ebp, esp
+ 80485ea: 83 ec 28                      sub     esp, 40
+ 80485ed: c7 45 f4 00 00 00 00          mov     dword ptr [ebp - 12], 0
+	*/
+	unsigned int input = 0; // [ebp - 12]
+	/*
+ 80485f4: a1 60 a0 04 08                mov     eax, dword ptr [134520928]
+ 80485f9: 89 04 24                      mov     dword ptr [esp], eax
+ 80485fc: e8 7f fe ff ff                call     <fflush@plt>
+	*/
 	fflush(stdout);
-	scanf("%u", input);
+	/*
+ 8048601: b8 d0 8a 04 08                mov     eax, 134515408 // "%u"
+ 8048606: 8d 55 f4                      lea     edx, [ebp - 12]
+ 8048609: 89 54 24 04                   mov     dword ptr [esp + 4], edx
+ 804860d: 89 04 24                      mov     dword ptr [esp], eax
+ 8048610: e8 eb fe ff ff                call     <__isoc99_scanf@plt>
+	*/
+	scanf("%u", &input); // esp, esp + 4
+	/*
+ 8048615: e8 aa ff ff ff                call     <clear_stdin>
+	*/
 	clear_stdin();
+	/*
+ 804861a: 8b 45 f4                      mov     eax, dword ptr [ebp - 12]
+ 804861d: c9                            leave
+ 804861e: c3                            ret
+	*/
 	return input;
 }
 
@@ -319,7 +387,7 @@ int main(int ac, char **av, char **env)
  80488ac: 83 e8 01                      sub     eax, 1
  80488af: c6 84 04 b8 01 00 00 00       mov     byte ptr [esp + eax + 440], 0
 		*/
-		line[strlen(line) - 2] = 0;
+		line[strlen(line) - 1] = 0; // Sub -1 instead of -2 cause repne include \0 size
 		/*
  80488b7: 8d 84 24 b8 01 00 00          lea     eax, [esp + 440]
  80488be: 89 c2                         mov     edx, eax
