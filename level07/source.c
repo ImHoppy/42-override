@@ -80,7 +80,7 @@ unsigned int get_unum()
 	return input;
 }
 
-int store_number(int *stockage)
+int store_number(unsigned int *stockage)
 {
 	/*
 08048630 <store_number>:
