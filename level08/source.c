@@ -13,7 +13,7 @@
   4008fa: 48 8d 85 f0 fe ff ff         	lea	rax, [rbp - 272]
   400901: 48 89 d6                     	mov	rsi, rdx
   400904: 48 89 c7                     	mov	rdi, rax
-  400907: e8 e4 fd ff ff               	call	 <.plt+0x10>
+  400907: e8 e4 fd ff ff               	call	<strcpy@plt>
   40090c: 48 8b b5 d8 fe ff ff         	mov	rsi, qword ptr [rbp - 296]
   400913: 48 8d 85 f0 fe ff ff         	lea	rax, [rbp - 272]
   40091a: 48 c7 85 d0 fe ff ff ff ff ff ff     	mov	qword ptr [rbp - 304], -1
@@ -44,11 +44,11 @@
   40098b: 4c 89 c6                     	mov	rsi, r8
   40098e: 48 89 c7                     	mov	rdi, rax
   400991: b8 00 00 00 00               	mov	eax, 0
-  400996: e8 a5 fd ff ff               	call	 <.plt+0x60>
+  400996: e8 a5 fd ff ff               	call	 <snprintf@plt>
   40099b: 48 8d 85 f0 fe ff ff         	lea	rax, [rbp - 272]
   4009a2: be 4c 0d 40 00               	mov	esi, 4197708
   4009a7: 48 89 c7                     	mov	rdi, rax
-  4009aa: e8 d1 fd ff ff               	call	 <.plt+0xa0>
+  4009aa: e8 d1 fd ff ff               	call	 <strcspn@plt>
   4009af: c6 84 05 f0 fe ff ff 00      	mov	byte ptr [rbp + rax - 272], 0
   4009b7: b9 4e 0d 40 00               	mov	ecx, 4197710
   4009bc: 48 8d 95 f0 fe ff ff         	lea	rdx, [rbp - 272]
@@ -56,11 +56,11 @@
   4009ca: 48 89 ce                     	mov	rsi, rcx
   4009cd: 48 89 c7                     	mov	rdi, rax
   4009d0: b8 00 00 00 00               	mov	eax, 0
-  4009d5: e8 c6 fd ff ff               	call	 <.plt+0xc0>
+  4009d5: e8 c6 fd ff ff               	call	 <fprintf@plt>
   4009da: 48 8b 45 f8                  	mov	rax, qword ptr [rbp - 8]
   4009de: 64 48 33 04 25 28 00 00 00   	xor	rax, qword ptr fs:[40]
   4009e7: 74 05                        	je	 <L0>
-  4009e9: e8 32 fd ff ff               	call	 <.plt+0x40>
+  4009e9: e8 32 fd ff ff               	call	 <__stack_chk_fail@plt>
 <L0>:
   4009ee: c9                           	leave
   4009ef: c3                           	ret
@@ -85,13 +85,13 @@
   400a3a: 48 89 d6                     	mov	rsi, rdx
   400a3d: 48 89 c7                     	mov	rdi, rax
   400a40: b8 00 00 00 00               	mov	eax, 0
-  400a45: e8 e6 fc ff ff               	call	 <.plt+0x50>
+  400a45: e8 e6 fc ff ff               	call	 <printf@plt>
 <L0>:
   400a4a: ba 6b 0d 40 00               	mov	edx, 4197739
   400a4f: b8 6d 0d 40 00               	mov	eax, 4197741
   400a54: 48 89 d6                     	mov	rsi, rdx
   400a57: 48 89 c7                     	mov	rdi, rax
-  400a5a: e8 61 fd ff ff               	call	 <.plt+0xe0>
+  400a5a: e8 61 fd ff ff               	call	 <fopen@plt>
   400a5f: 48 89 85 78 ff ff ff         	mov	qword ptr [rbp - 136], rax
   400a66: 48 83 bd 78 ff ff ff 00      	cmp	qword ptr [rbp - 136], 0
   400a6e: 75 21                        	jne	 <L1>
@@ -99,9 +99,9 @@
   400a75: be 6d 0d 40 00               	mov	esi, 4197741
   400a7a: 48 89 c7                     	mov	rdi, rax
   400a7d: b8 00 00 00 00               	mov	eax, 0
-  400a82: e8 a9 fc ff ff               	call	 <.plt+0x50>
+  400a82: e8 a9 fc ff ff               	call	 <printf@plt>
   400a87: bf 01 00 00 00               	mov	edi, 1
-  400a8c: e8 3f fd ff ff               	call	 <.plt+0xf0>
+  400a8c: e8 3f fd ff ff               	call	 <exit@plt>
 <L1>:
   400a91: 48 8b 85 60 ff ff ff         	mov	rax, qword ptr [rbp - 160]
   400a98: 48 83 c0 08                  	add	rax, 8
@@ -116,7 +116,7 @@
   400ac3: 48 8b 00                     	mov	rax, qword ptr [rax]
   400ac6: 48 89 d6                     	mov	rsi, rdx
   400ac9: 48 89 c7                     	mov	rdi, rax
-  400acc: e8 ef fc ff ff               	call	 <.plt+0xe0>
+  400acc: e8 ef fc ff ff               	call	 <fopen@plt>
   400ad1: 48 89 45 80                  	mov	qword ptr [rbp - 128], rax
   400ad5: 48 83 7d 80 00               	cmp	qword ptr [rbp - 128], 0
   400ada: 75 2d                        	jne	 <L2>
@@ -127,9 +127,9 @@
   400aef: 48 89 d6                     	mov	rsi, rdx
   400af2: 48 89 c7                     	mov	rdi, rax
   400af5: b8 00 00 00 00               	mov	eax, 0
-  400afa: e8 31 fc ff ff               	call	 <.plt+0x50>
+  400afa: e8 31 fc ff ff               	call	 <printf@plt>
   400aff: bf 01 00 00 00               	mov	edi, 1
-  400b04: e8 c7 fc ff ff               	call	 <.plt+0xf0>
+  400b04: e8 c7 fc ff ff               	call	 <exit@plt>
 <L2>:
   400b09: ba ab 0d 40 00               	mov	edx, 4197803
   400b0e: 48 8d 45 90                  	lea	rax, [rbp - 112]
@@ -160,13 +160,13 @@
   400b73: 48 8d 45 90                  	lea	rax, [rbp - 112]
   400b77: 48 89 ce                     	mov	rsi, rcx
   400b7a: 48 89 c7                     	mov	rdi, rax
-  400b7d: e8 ce fb ff ff               	call	 <.plt+0x70>
+  400b7d: e8 ce fb ff ff               	call	 <strncat@plt>
   400b82: 48 8d 45 90                  	lea	rax, [rbp - 112]
   400b86: ba b0 01 00 00               	mov	edx, 432
   400b8b: be c1 00 00 00               	mov	esi, 193
   400b90: 48 89 c7                     	mov	rdi, rax
   400b93: b8 00 00 00 00               	mov	eax, 0
-  400b98: e8 13 fc ff ff               	call	 <.plt+0xd0>
+  400b98: e8 13 fc ff ff               	call	 <open@plt>
   400b9d: 89 45 88                     	mov	dword ptr [rbp - 120], eax
   400ba0: 83 7d 88 00                  	cmp	dword ptr [rbp - 120], 0
   400ba4: 79 47                        	jns	 <L3>
@@ -177,23 +177,23 @@
   400bb9: be ab 0d 40 00               	mov	esi, 4197803
   400bbe: 48 89 c7                     	mov	rdi, rax
   400bc1: b8 00 00 00 00               	mov	eax, 0
-  400bc6: e8 65 fb ff ff               	call	 <.plt+0x50>
+  400bc6: e8 65 fb ff ff               	call	 <printf@plt>
   400bcb: bf 01 00 00 00               	mov	edi, 1
-  400bd0: e8 fb fb ff ff               	call	 <.plt+0xf0>
+  400bd0: e8 fb fb ff ff               	call	 <exit@plt>
 <L5>:
   400bd5: 48 8d 4d 8f                  	lea	rcx, [rbp - 113]
   400bd9: 8b 45 88                     	mov	eax, dword ptr [rbp - 120]
   400bdc: ba 01 00 00 00               	mov	edx, 1
   400be1: 48 89 ce                     	mov	rsi, rcx
   400be4: 89 c7                        	mov	edi, eax
-  400be6: e8 15 fb ff ff               	call	 <.plt+0x20>
+  400be6: e8 15 fb ff ff               	call	 <write@plt>
   400beb: eb 01                        	jmp	 <L4>
 <L3>:
   400bed: 90                           	nop
 <L4>:
   400bee: 48 8b 45 80                  	mov	rax, qword ptr [rbp - 128]
   400bf2: 48 89 c7                     	mov	rdi, rax
-  400bf5: e8 66 fb ff ff               	call	 <.plt+0x80>
+  400bf5: e8 66 fb ff ff               	call	 <fgetc@plt>
   400bfa: 88 45 8f                     	mov	byte ptr [rbp - 113], al
   400bfd: 0f b6 45 8f                  	movzx	eax, byte ptr [rbp - 113]
   400c01: 3c ff                        	cmp	al, -1
@@ -207,15 +207,15 @@
   400c22: e8 9d fc ff ff               	call	 <log_wrapper>
   400c27: 48 8b 45 80                  	mov	rax, qword ptr [rbp - 128]
   400c2b: 48 89 c7                     	mov	rdi, rax
-  400c2e: e8 dd fa ff ff               	call	 <.plt+0x30>
+  400c2e: e8 dd fa ff ff               	call	 <fclose@plt>
   400c33: 8b 45 88                     	mov	eax, dword ptr [rbp - 120]
   400c36: 89 c7                        	mov	edi, eax
-  400c38: e8 33 fb ff ff               	call	 <.plt+0x90>
+  400c38: e8 33 fb ff ff               	call	 <close@plt>
   400c3d: b8 00 00 00 00               	mov	eax, 0
   400c42: 48 8b 7d f8                  	mov	rdi, qword ptr [rbp - 8]
   400c46: 64 48 33 3c 25 28 00 00 00   	xor	rdi, qword ptr fs:[40]
   400c4f: 74 05                        	je	 <L6>
-  400c51: e8 ca fa ff ff               	call	 <.plt+0x40>
+  400c51: e8 ca fa ff ff               	call	 <__stack_chk_fail@plt>
 <L6>:
   400c56: c9                           	leave
   400c57: c3                           	ret
@@ -227,7 +227,4 @@
   400c5d: 90                           	nop
   400c5e: 90                           	nop
   400c5f: 90                           	nop
-
-
-
 */
