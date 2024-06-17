@@ -1,19 +1,35 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
 /*
 00000000004008c4 <log_wrapper>:
   4008c4: 55                           	push	rbp
   4008c5: 48 89 e5                     	mov	rbp, rsp
   4008c8: 48 81 ec 30 01 00 00         	sub	rsp, 304
-  4008cf: 48 89 bd e8 fe ff ff         	mov	qword ptr [rbp - 280], rdi
-  4008d6: 48 89 b5 e0 fe ff ff         	mov	qword ptr [rbp - 288], rsi
-  4008dd: 48 89 95 d8 fe ff ff         	mov	qword ptr [rbp - 296], rdx
+  4008cf: 48 89 bd e8 fe ff ff         	mov	qword ptr [rbp - 280], rdi			; param_1
+  4008d6: 48 89 b5 e0 fe ff ff         	mov	qword ptr [rbp - 288], rsi			; param_2
+  4008dd: 48 89 95 d8 fe ff ff         	mov	qword ptr [rbp - 296], rdx			; filename
+*/
+void log_wrapper(FILE *backup_file, char *param_2, char *filename)
+{
+	/*
   4008e4: 64 48 8b 04 25 28 00 00 00   	mov	rax, qword ptr fs:[40]
   4008ed: 48 89 45 f8                  	mov	qword ptr [rbp - 8], rax
+	*/
+	// Canary protection variable of size 8
+	/*
   4008f1: 31 c0                        	xor	eax, eax
   4008f3: 48 8b 95 e0 fe ff ff         	mov	rdx, qword ptr [rbp - 288]
   4008fa: 48 8d 85 f0 fe ff ff         	lea	rax, [rbp - 272]
   400901: 48 89 d6                     	mov	rsi, rdx
   400904: 48 89 c7                     	mov	rdi, rax
   400907: e8 e4 fd ff ff               	call	<strcpy@plt>
+	*/
+	char buffer[264]; // from (rbp - 272) to (rbp - 8) = 264
+	strcpy(buffer, param_2);
+	/*
   40090c: 48 8b b5 d8 fe ff ff         	mov	rsi, qword ptr [rbp - 296]
   400913: 48 8d 85 f0 fe ff ff         	lea	rax, [rbp - 272]
   40091a: 48 c7 85 d0 fe ff ff ff ff ff ff     	mov	qword ptr [rbp - 304], -1
@@ -21,7 +37,10 @@
   400928: b8 00 00 00 00               	mov	eax, 0
   40092d: 48 8b 8d d0 fe ff ff         	mov	rcx, qword ptr [rbp - 304]
   400934: 48 89 d7                     	mov	rdi, rdx
-  400937: f2 ae                        	repne		scasb	al, byte ptr es:[rdi]
+  400937: f2 ae                        	repne		scasb	al, byte ptr es:[rdi
+	*/
+	size_t buffer_len = strlen(buffer);
+	/*
   400939: 48 89 c8                     	mov	rax, rcx
   40093c: 48 f7 d0                     	not	rax
   40093f: 48 8d 50 ff                  	lea	rdx, [rax - 1]
@@ -29,12 +48,18 @@
   400948: 49 89 c0                     	mov	r8, rax
   40094b: 49 29 d0                     	sub	r8, rdx
   40094e: 48 8d 85 f0 fe ff ff         	lea	rax, [rbp - 272]
+	*/
+	size_t filename_len = strlen(filename);
+	/*
   400955: 48 c7 85 d0 fe ff ff ff ff ff ff     	mov	qword ptr [rbp - 304], -1
   400960: 48 89 c2                     	mov	rdx, rax
   400963: b8 00 00 00 00               	mov	eax, 0
   400968: 48 8b 8d d0 fe ff ff         	mov	rcx, qword ptr [rbp - 304]
   40096f: 48 89 d7                     	mov	rdi, rdx
   400972: f2 ae                        	repne		scasb	al, byte ptr es:[rdi]
+	*/
+	int unk = 0; //??  // [rbp - 304]
+	/*
   400974: 48 89 c8                     	mov	rax, rcx
   400977: 48 f7 d0                     	not	rax
   40097a: 48 8d 50 ff                  	lea	rdx, [rax - 1]
@@ -45,18 +70,30 @@
   40098e: 48 89 c7                     	mov	rdi, rax
   400991: b8 00 00 00 00               	mov	eax, 0
   400996: e8 a5 fd ff ff               	call	 <snprintf@plt>
+	*/
+	snprintf(buffer + buffer_len, 264 - buffer_len, filename, unk);
+	/*
   40099b: 48 8d 85 f0 fe ff ff         	lea	rax, [rbp - 272]
-  4009a2: be 4c 0d 40 00               	mov	esi, 4197708
+  4009a2: be 4c 0d 40 00               	mov	esi, 4197708						; 0x400d4c:	"\n"
   4009a7: 48 89 c7                     	mov	rdi, rax
   4009aa: e8 d1 fd ff ff               	call	 <strcspn@plt>
+	*/
+	size_t prefix_len = strcspn(buffer, "\n");
+	/*
   4009af: c6 84 05 f0 fe ff ff 00      	mov	byte ptr [rbp + rax - 272], 0
-  4009b7: b9 4e 0d 40 00               	mov	ecx, 4197710
+	*/
+	buffer[prefix_len] = 0;
+	/*
+  4009b7: b9 4e 0d 40 00               	mov	ecx, 4197710						; 0x400d4e:	"LOG: %s\n"
   4009bc: 48 8d 95 f0 fe ff ff         	lea	rdx, [rbp - 272]
   4009c3: 48 8b 85 e8 fe ff ff         	mov	rax, qword ptr [rbp - 280]
   4009ca: 48 89 ce                     	mov	rsi, rcx
   4009cd: 48 89 c7                     	mov	rdi, rax
   4009d0: b8 00 00 00 00               	mov	eax, 0
   4009d5: e8 c6 fd ff ff               	call	 <fprintf@plt>
+	*/
+	fprintf(backup_file, "LOG: %s\n", buffer);
+	/*
   4009da: 48 8b 45 f8                  	mov	rax, qword ptr [rbp - 8]
   4009de: 64 48 33 04 25 28 00 00 00   	xor	rax, qword ptr fs:[40]
   4009e7: 74 05                        	je	 <L0>
@@ -64,7 +101,8 @@
 <L0>:
   4009ee: c9                           	leave
   4009ef: c3                           	ret
-*/
+	*/
+}
 /*
 00000000004009f0 <main>:
   4009f0: 55                           	push	rbp
