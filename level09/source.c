@@ -1,4 +1,5 @@
 #include <string.h>
+#include <strings.h>
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -35,6 +36,13 @@ void secret_backdoor(void)
 */
 }
 
+struct source
+{
+	char message[140];
+	char username[40];
+	int message_size;
+};
+
 /*
 00000000000008c0 <handle_msg>:
   8c0: 55                           	push	rbp
@@ -45,6 +53,7 @@ void secret_backdoor(void)
 	*/
 void handle_msg(void)
 {
+	struct source source;
 	/*
   8d8: 48 c7 00 00 00 00 00         	mov	qword ptr [rax], 0
   8df: 48 c7 40 08 00 00 00 00      	mov	qword ptr [rax + 8], 0
@@ -52,19 +61,28 @@ void handle_msg(void)
   8ef: 48 c7 40 18 00 00 00 00      	mov	qword ptr [rax + 24], 0
   8f7: 48 c7 40 20 00 00 00 00      	mov	qword ptr [rax + 32], 0
 	*/
-
+	bzero(source.username, 40);
 	/*
   8ff: c7 45 f4 8c 00 00 00         	mov	dword ptr [rbp - 12], 140
+	*/
+	source.message_size = 140;
+	/*
   906: 48 8d 85 40 ff ff ff         	lea	rax, [rbp - 192]
   90d: 48 89 c7                     	mov	rdi, rax
   910: e8 b8 00 00 00               	call	 <set_username>
+	*/
+	set_username(&source);
+	/*
   915: 48 8d 85 40 ff ff ff         	lea	rax, [rbp - 192]
   91c: 48 89 c7                     	mov	rdi, rax
   91f: e8 0e 00 00 00               	call	 <set_msg>
+	*/
+	set_msg(&source);
+	/*
   924: 48 8d 3d 95 02 00 00         	lea	rdi,  0xbc0							; ">: Msg sent!"
   92b: e8 00 fe ff ff               	call	 <puts@plt>
 	*/
-	puts("");
+	puts(">: Msg sent!");
 	/*
   930: c9                           	leave
   931: c3                           	ret
@@ -77,6 +95,10 @@ void handle_msg(void)
   933: 48 89 e5                     	mov	rbp, rsp
   936: 48 81 ec 10 04 00 00         	sub	rsp, 1040
   93d: 48 89 bd f8 fb ff ff         	mov	qword ptr [rbp - 1032], rdi
+*/
+void set_msg(struct source *source)
+{
+	/*
   944: 48 8d 85 00 fc ff ff         	lea	rax, [rbp - 1024]
   94b: 48 89 c6                     	mov	rsi, rax
   94e: b8 00 00 00 00               	mov	eax, 0
@@ -84,12 +106,21 @@ void handle_msg(void)
   958: 48 89 f7                     	mov	rdi, rsi
   95b: 48 89 d1                     	mov	rcx, rdx
   95e: f3 48 ab                     	rep		stosq	qword ptr es:[rdi], rax
+	*/
+	char buffer[1024] = {0};
+	/*
   961: 48 8d 3d 65 02 00 00         	lea	rdi,  0xbcd							; ">: Msg @Unix-Dude"
   968: e8 c3 fd ff ff               	call	 <puts@plt>
+	*/
+	puts(">: Msg @Unix-Dude");
+	/*
   96d: 48 8d 05 6b 02 00 00         	lea	rax,  0xbdf							; ">>: "
   974: 48 89 c7                     	mov	rdi, rax
   977: b8 00 00 00 00               	mov	eax, 0
   97c: e8 cf fd ff ff               	call	 <printf@plt>
+	*/
+	printf(">>: ");
+	/*
   981: 48 8b 05 30 16 20 00         	mov	rax, qword ptr  0x201fb8			; stdin
   988: 48 8b 00                     	mov	rax, qword ptr [rax]
   98b: 48 89 c2                     	mov	rdx, rax
@@ -97,6 +128,9 @@ void handle_msg(void)
   995: be 00 04 00 00               	mov	esi, 1024
   99a: 48 89 c7                     	mov	rdi, rax
   99d: e8 ce fd ff ff               	call	 <fgets@plt>
+	*/
+	fgets(buffer, 1024, stdin);
+	/*
   9a2: 48 8b 85 f8 fb ff ff         	mov	rax, qword ptr [rbp - 1032]
   9a9: 8b 80 b4 00 00 00            	mov	eax, dword ptr [rax + 180]
   9af: 48 63 d0                     	movsxd	rdx, eax
@@ -105,9 +139,15 @@ void handle_msg(void)
   9c0: 48 89 ce                     	mov	rsi, rcx
   9c3: 48 89 c7                     	mov	rdi, rax
   9c6: e8 55 fd ff ff               	call	 <strncpy@plt>
+	*/
+	strncpy(source->message, buffer, (size_t)source->message_size);
+	/*
   9cb: c9                           	leave
   9cc: c3                           	ret
+	*/
+}
 
+/*
 00000000000009cd <set_username>:
   9cd: 55                           	push	rbp
   9ce: 48 89 e5                     	mov	rbp, rsp
