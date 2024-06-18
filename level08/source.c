@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 /*
 00000000004008c4 <log_wrapper>:
@@ -185,13 +188,13 @@ int main(int ac, char **av)
   400ac9: 48 89 c7                     	mov	rdi, rax
   400acc: e8 ef fc ff ff               	call	 <fopen@plt>
 	*/
-	FILE *a = fopen(av[1], "r"); // [rbp - 128]
+	FILE *filetocopy = fopen(av[1], "r"); // [rbp - 128]
 	/*
   400ad1: 48 89 45 80                  	mov	qword ptr [rbp - 128], rax
   400ad5: 48 83 7d 80 00               	cmp	qword ptr [rbp - 128], 0
   400ada: 75 2d                        	jne	 <L2>
 	*/
-	if (a == NULL)
+	if (filetocopy == NULL)
 	{
 		/*
 	  400adc: 48 8b 85 60 ff ff ff         	mov	rax, qword ptr [rbp - 160]
@@ -228,7 +231,8 @@ int main(int ac, char **av)
   400b45: 48 89 d7                     	mov	rdi, rdx
   400b48: f2 ae                        	repne		scasb	al, byte ptr es:[rdi]
 	*/
-	size_t backup_len = strlen("./backups/");
+	char *dest[99]; // Calculate from gdb size of 99
+	strcpy(dest, "./backups/");
 	/*
   400b4a: 48 89 c8                     	mov	rax, rcx
   400b4d: 48 f7 d0                     	not	rax
@@ -246,7 +250,7 @@ int main(int ac, char **av)
   400b7a: 48 89 c7                     	mov	rdi, rax
   400b7d: e8 ce fb ff ff               	call	 <strncat@plt>
 	*/
-	strncat(a, "./backups/", backup_len)
+	strncat(dest, "./backups/", 99 - strlen("./backups/"));
 	/*
   400b82: 48 8d 45 90                  	lea	rax, [rbp - 112]
   400b86: ba b0 01 00 00               	mov	edx, 432
@@ -254,37 +258,66 @@ int main(int ac, char **av)
   400b90: 48 89 c7                     	mov	rdi, rax
   400b93: b8 00 00 00 00               	mov	eax, 0
   400b98: e8 13 fc ff ff               	call	 <open@plt>
+	*/
+	int fd = open(dest, O_CREAT | O_EXCL | O_WRONLY, 0660); // [rbp - 120]
+	/*
   400b9d: 89 45 88                     	mov	dword ptr [rbp - 120], eax
   400ba0: 83 7d 88 00                  	cmp	dword ptr [rbp - 120], 0
   400ba4: 79 47                        	jns	 <L3>
-  400ba6: 48 8b 85 60 ff ff ff         	mov	rax, qword ptr [rbp - 160]
-  400bad: 48 83 c0 08                  	add	rax, 8
-  400bb1: 48 8b 10                     	mov	rdx, qword ptr [rax]
-  400bb4: b8 b6 0d 40 00               	mov	eax, 4197814						; "ERROR: Failed to open %s%s\n"
-  400bb9: be ab 0d 40 00               	mov	esi, 4197803						; "./backups/"
-  400bbe: 48 89 c7                     	mov	rdi, rax
-  400bc1: b8 00 00 00 00               	mov	eax, 0
-  400bc6: e8 65 fb ff ff               	call	 <printf@plt>
-  400bcb: bf 01 00 00 00               	mov	edi, 1
-  400bd0: e8 fb fb ff ff               	call	 <exit@plt>
-<L5>:
-  400bd5: 48 8d 4d 8f                  	lea	rcx, [rbp - 113]
-  400bd9: 8b 45 88                     	mov	eax, dword ptr [rbp - 120]
-  400bdc: ba 01 00 00 00               	mov	edx, 1
-  400be1: 48 89 ce                     	mov	rsi, rcx
-  400be4: 89 c7                        	mov	edi, eax
-  400be6: e8 15 fb ff ff               	call	 <write@plt>
-  400beb: eb 01                        	jmp	 <L4>
+	*/
+	if (fd < 0)
+	{
+		/*
+	  400ba6: 48 8b 85 60 ff ff ff         	mov	rax, qword ptr [rbp - 160]
+	  400bad: 48 83 c0 08                  	add	rax, 8
+	  400bb1: 48 8b 10                     	mov	rdx, qword ptr [rax]
+	  400bb4: b8 b6 0d 40 00               	mov	eax, 4197814						; "ERROR: Failed to open %s%s\n"
+	  400bb9: be ab 0d 40 00               	mov	esi, 4197803						; "./backups/"
+	  400bbe: 48 89 c7                     	mov	rdi, rax
+	  400bc1: b8 00 00 00 00               	mov	eax, 0
+	  400bc6: e8 65 fb ff ff               	call	 <printf@plt>
+		*/
+		printf("ERROR: Failed to open %s%s\n", "./backups/", av[1]);
+		/*
+	  400bcb: bf 01 00 00 00               	mov	edi, 1
+	  400bd0: e8 fb fb ff ff               	call	 <exit@plt>
+		*/
+		exit(1);
+	}
+	/*
 <L3>:
   400bed: 90                           	nop
-<L4>:
-  400bee: 48 8b 45 80                  	mov	rax, qword ptr [rbp - 128]
-  400bf2: 48 89 c7                     	mov	rdi, rax
-  400bf5: e8 66 fb ff ff               	call	 <fgetc@plt>
-  400bfa: 88 45 8f                     	mov	byte ptr [rbp - 113], al
-  400bfd: 0f b6 45 8f                  	movzx	eax, byte ptr [rbp - 113]
-  400c01: 3c ff                        	cmp	al, -1
-  400c03: 75 d0                        	jne	 <L5>
+*/
+	while (1)
+	{
+		/*
+	<L4>:
+	  400bee: 48 8b 45 80                  	mov	rax, qword ptr [rbp - 128]
+	  400bf2: 48 89 c7                     	mov	rdi, rax
+	  400bf5: e8 66 fb ff ff               	call	 <fgetc@plt>
+	  400bfa: 88 45 8f                     	mov	byte ptr [rbp - 113], al
+	  400bfd: 0f b6 45 8f                  	movzx	eax, byte ptr [rbp - 113]
+	  400c01: 3c ff                        	cmp	al, -1
+	  400c03: 75 d0                        	jne	 <L5>
+		*/
+		char c = fgetc(filetocopy);
+		if (c == -1)
+			break;
+		/*
+	<L5>:
+	  400bd5: 48 8d 4d 8f                  	lea	rcx, [rbp - 113]
+	  400bd9: 8b 45 88                     	mov	eax, dword ptr [rbp - 120]
+	  400bdc: ba 01 00 00 00               	mov	edx, 1
+	  400be1: 48 89 ce                     	mov	rsi, rcx
+	  400be4: 89 c7                        	mov	edi, eax
+	  400be6: e8 15 fb ff ff               	call	 <write@plt>
+		*/
+		write(fd, &c, 1);
+		/*
+	  400beb: eb 01                        	jmp	 <L4>
+		*/
+	}
+	/*
   400c05: 48 8b 85 60 ff ff ff         	mov	rax, qword ptr [rbp - 160]
   400c0c: 48 83 c0 08                  	add	rax, 8
   400c10: 48 8b 10                     	mov	rdx, qword ptr [rax]
@@ -292,12 +325,21 @@ int main(int ac, char **av)
   400c1a: be d2 0d 40 00               	mov	esi, 4197842						; "Finished back up "
   400c1f: 48 89 c7                     	mov	rdi, rax
   400c22: e8 9d fc ff ff               	call	 <log_wrapper>
+	*/
+	log_wrapper(backup, "Finished back up ", av[1]);
+	/*
   400c27: 48 8b 45 80                  	mov	rax, qword ptr [rbp - 128]
   400c2b: 48 89 c7                     	mov	rdi, rax
   400c2e: e8 dd fa ff ff               	call	 <fclose@plt>
+	*/
+	fclose(filetocopy);
+	/*
   400c33: 8b 45 88                     	mov	eax, dword ptr [rbp - 120]
   400c36: 89 c7                        	mov	edi, eax
   400c38: e8 33 fb ff ff               	call	 <close@plt>
+	*/
+	close(fd);
+	/*
   400c3d: b8 00 00 00 00               	mov	eax, 0
   400c42: 48 8b 7d f8                  	mov	rdi, qword ptr [rbp - 8]
   400c46: 64 48 33 3c 25 28 00 00 00   	xor	rdi, qword ptr fs:[40]
@@ -306,5 +348,6 @@ int main(int ac, char **av)
 <L6>:
   400c56: c9                           	leave
   400c57: c3                           	ret
-*/
+	*/
+	return 0;
 }
