@@ -2,3 +2,4 @@ level*/level*
 *.o
 a.out
 .gdb_history
+level08/backups/*

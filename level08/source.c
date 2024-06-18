@@ -108,68 +108,111 @@ void log_wrapper(FILE *backup_file, char *param_2, char *filename)
   4009f0: 55                           	push	rbp
   4009f1: 48 89 e5                     	mov	rbp, rsp
   4009f4: 48 81 ec b0 00 00 00         	sub	rsp, 176
-  4009fb: 89 bd 6c ff ff ff            	mov	dword ptr [rbp - 148], edi
-  400a01: 48 89 b5 60 ff ff ff         	mov	qword ptr [rbp - 160], rsi
+  4009fb: 89 bd 6c ff ff ff            	mov	dword ptr [rbp - 148], edi          ; ac
+  400a01: 48 89 b5 60 ff ff ff         	mov	qword ptr [rbp - 160], rsi          ; av
+*/
+int main(int ac, char **av)
+{
+	/*
   400a08: 64 48 8b 04 25 28 00 00 00   	mov	rax, qword ptr fs:[40]
   400a11: 48 89 45 f8                  	mov	qword ptr [rbp - 8], rax
   400a15: 31 c0                        	xor	eax, eax
   400a17: c6 45 8f ff                  	mov	byte ptr [rbp - 113], -1
-  400a1b: c7 45 88 ff ff ff ff         	mov	dword ptr [rbp - 120], 4294967295
+  400a1b: c7 45 88 ff ff ff ff         	mov	dword ptr [rbp - 120], 0xffffffff
   400a22: 83 bd 6c ff ff ff 02         	cmp	dword ptr [rbp - 148], 2
   400a29: 74 1f                        	je	 <L0>
-  400a2b: 48 8b 85 60 ff ff ff         	mov	rax, qword ptr [rbp - 160]
-  400a32: 48 8b 10                     	mov	rdx, qword ptr [rax]
-  400a35: b8 57 0d 40 00               	mov	eax, 4197719
-  400a3a: 48 89 d6                     	mov	rsi, rdx
-  400a3d: 48 89 c7                     	mov	rdi, rax
-  400a40: b8 00 00 00 00               	mov	eax, 0
-  400a45: e8 e6 fc ff ff               	call	 <printf@plt>
+	*/
+	if (ac != 2)
+	{
+		/*
+	  400a2b: 48 8b 85 60 ff ff ff         	mov	rax, qword ptr [rbp - 160]
+	  400a32: 48 8b 10                     	mov	rdx, qword ptr [rax]
+	  400a35: b8 57 0d 40 00               	mov	eax, 4197719					; "Usage: %s filename\n"
+	  400a3a: 48 89 d6                     	mov	rsi, rdx
+	  400a3d: 48 89 c7                     	mov	rdi, rax
+	  400a40: b8 00 00 00 00               	mov	eax, 0
+	  400a45: e8 e6 fc ff ff               	call	 <printf@plt>
+		*/
+		printf("Usage: %s filename\n", *av);
+	}
+	/*
 <L0>:
-  400a4a: ba 6b 0d 40 00               	mov	edx, 4197739
-  400a4f: b8 6d 0d 40 00               	mov	eax, 4197741
+  400a4a: ba 6b 0d 40 00               	mov	edx, 4197739						; "w"
+  400a4f: b8 6d 0d 40 00               	mov	eax, 4197741						; "./backups/.log"
   400a54: 48 89 d6                     	mov	rsi, rdx
   400a57: 48 89 c7                     	mov	rdi, rax
   400a5a: e8 61 fd ff ff               	call	 <fopen@plt>
   400a5f: 48 89 85 78 ff ff ff         	mov	qword ptr [rbp - 136], rax
+	*/
+	FILE *backup = fopen("./backups/.log", "w"); // [rbp - 136]
+	/*
   400a66: 48 83 bd 78 ff ff ff 00      	cmp	qword ptr [rbp - 136], 0
   400a6e: 75 21                        	jne	 <L1>
-  400a70: b8 7c 0d 40 00               	mov	eax, 4197756
-  400a75: be 6d 0d 40 00               	mov	esi, 4197741
-  400a7a: 48 89 c7                     	mov	rdi, rax
-  400a7d: b8 00 00 00 00               	mov	eax, 0
-  400a82: e8 a9 fc ff ff               	call	 <printf@plt>
-  400a87: bf 01 00 00 00               	mov	edi, 1
-  400a8c: e8 3f fd ff ff               	call	 <exit@plt>
+	*/
+	if (backup == NULL)
+	{
+		/*
+	  400a70: b8 7c 0d 40 00               	mov	eax, 4197756					; "ERROR: Failed to open %s\n"
+	  400a75: be 6d 0d 40 00               	mov	esi, 4197741					; "./backups/.log"
+	  400a7a: 48 89 c7                     	mov	rdi, rax
+	  400a7d: b8 00 00 00 00               	mov	eax, 0
+	  400a82: e8 a9 fc ff ff               	call	 <printf@plt>
+		*/
+		printf("ERROR: Failed to open %s\n", "./backups/.log");
+		/*
+	  400a87: bf 01 00 00 00               	mov	edi, 1
+	  400a8c: e8 3f fd ff ff               	call	 <exit@plt>
+		*/
+		exit(1);
+	}
+	/*
 <L1>:
   400a91: 48 8b 85 60 ff ff ff         	mov	rax, qword ptr [rbp - 160]
   400a98: 48 83 c0 08                  	add	rax, 8
   400a9c: 48 8b 10                     	mov	rdx, qword ptr [rax]
   400a9f: 48 8b 85 78 ff ff ff         	mov	rax, qword ptr [rbp - 136]
-  400aa6: be 96 0d 40 00               	mov	esi, 4197782
+  400aa6: be 96 0d 40 00               	mov	esi, 4197782						; "Starting back up: "
   400aab: 48 89 c7                     	mov	rdi, rax
   400aae: e8 11 fe ff ff               	call	 <log_wrapper>
-  400ab3: ba a9 0d 40 00               	mov	edx, 4197801
+	*/
+	log_wrapper(backup, "Starting back up: ", av[1]);
+	/*
+  400ab3: ba a9 0d 40 00               	mov	edx, 4197801						; "r"
   400ab8: 48 8b 85 60 ff ff ff         	mov	rax, qword ptr [rbp - 160]
   400abf: 48 83 c0 08                  	add	rax, 8
   400ac3: 48 8b 00                     	mov	rax, qword ptr [rax]
   400ac6: 48 89 d6                     	mov	rsi, rdx
   400ac9: 48 89 c7                     	mov	rdi, rax
   400acc: e8 ef fc ff ff               	call	 <fopen@plt>
+	*/
+	FILE *a = fopen(av[1], "r"); // [rbp - 128]
+	/*
   400ad1: 48 89 45 80                  	mov	qword ptr [rbp - 128], rax
   400ad5: 48 83 7d 80 00               	cmp	qword ptr [rbp - 128], 0
   400ada: 75 2d                        	jne	 <L2>
-  400adc: 48 8b 85 60 ff ff ff         	mov	rax, qword ptr [rbp - 160]
-  400ae3: 48 83 c0 08                  	add	rax, 8
-  400ae7: 48 8b 10                     	mov	rdx, qword ptr [rax]
-  400aea: b8 7c 0d 40 00               	mov	eax, 4197756
-  400aef: 48 89 d6                     	mov	rsi, rdx
-  400af2: 48 89 c7                     	mov	rdi, rax
-  400af5: b8 00 00 00 00               	mov	eax, 0
-  400afa: e8 31 fc ff ff               	call	 <printf@plt>
-  400aff: bf 01 00 00 00               	mov	edi, 1
-  400b04: e8 c7 fc ff ff               	call	 <exit@plt>
+	*/
+	if (a == NULL)
+	{
+		/*
+	  400adc: 48 8b 85 60 ff ff ff         	mov	rax, qword ptr [rbp - 160]
+	  400ae3: 48 83 c0 08                  	add	rax, 8
+	  400ae7: 48 8b 10                     	mov	rdx, qword ptr [rax]
+	  400aea: b8 7c 0d 40 00               	mov	eax, 4197756					; "ERROR: Failed to open %s\n"
+	  400aef: 48 89 d6                     	mov	rsi, rdx
+	  400af2: 48 89 c7                     	mov	rdi, rax
+	  400af5: b8 00 00 00 00               	mov	eax, 0
+	  400afa: e8 31 fc ff ff               	call	 <printf@plt>
+		*/
+		printf("ERROR: Failed to open %s\n", av[1]);
+		/*
+	  400aff: bf 01 00 00 00               	mov	edi, 1
+	  400b04: e8 c7 fc ff ff               	call	 <exit@plt>
+		*/
+		exit(1);
+	}
+	/*
 <L2>:
-  400b09: ba ab 0d 40 00               	mov	edx, 4197803
+  400b09: ba ab 0d 40 00               	mov	edx, 4197803						; "./backups/"
   400b0e: 48 8d 45 90                  	lea	rax, [rbp - 112]
   400b12: 48 8b 0a                     	mov	rcx, qword ptr [rdx]
   400b15: 48 89 08                     	mov	qword ptr [rax], rcx
@@ -184,6 +227,9 @@ void log_wrapper(FILE *backup_file, char *param_2, char *filename)
   400b3e: 48 8b 8d 58 ff ff ff         	mov	rcx, qword ptr [rbp - 168]
   400b45: 48 89 d7                     	mov	rdi, rdx
   400b48: f2 ae                        	repne		scasb	al, byte ptr es:[rdi]
+	*/
+	size_t backup_len = strlen("./backups/");
+	/*
   400b4a: 48 89 c8                     	mov	rax, rcx
   400b4d: 48 f7 d0                     	not	rax
   400b50: 48 8d 50 ff                  	lea	rdx, [rax - 1]
@@ -199,6 +245,9 @@ void log_wrapper(FILE *backup_file, char *param_2, char *filename)
   400b77: 48 89 ce                     	mov	rsi, rcx
   400b7a: 48 89 c7                     	mov	rdi, rax
   400b7d: e8 ce fb ff ff               	call	 <strncat@plt>
+	*/
+	strncat(a, "./backups/", backup_len)
+	/*
   400b82: 48 8d 45 90                  	lea	rax, [rbp - 112]
   400b86: ba b0 01 00 00               	mov	edx, 432
   400b8b: be c1 00 00 00               	mov	esi, 193
@@ -211,8 +260,8 @@ void log_wrapper(FILE *backup_file, char *param_2, char *filename)
   400ba6: 48 8b 85 60 ff ff ff         	mov	rax, qword ptr [rbp - 160]
   400bad: 48 83 c0 08                  	add	rax, 8
   400bb1: 48 8b 10                     	mov	rdx, qword ptr [rax]
-  400bb4: b8 b6 0d 40 00               	mov	eax, 4197814
-  400bb9: be ab 0d 40 00               	mov	esi, 4197803
+  400bb4: b8 b6 0d 40 00               	mov	eax, 4197814						; "ERROR: Failed to open %s%s\n"
+  400bb9: be ab 0d 40 00               	mov	esi, 4197803						; "./backups/"
   400bbe: 48 89 c7                     	mov	rdi, rax
   400bc1: b8 00 00 00 00               	mov	eax, 0
   400bc6: e8 65 fb ff ff               	call	 <printf@plt>
@@ -240,7 +289,7 @@ void log_wrapper(FILE *backup_file, char *param_2, char *filename)
   400c0c: 48 83 c0 08                  	add	rax, 8
   400c10: 48 8b 10                     	mov	rdx, qword ptr [rax]
   400c13: 48 8b 85 78 ff ff ff         	mov	rax, qword ptr [rbp - 136]
-  400c1a: be d2 0d 40 00               	mov	esi, 4197842
+  400c1a: be d2 0d 40 00               	mov	esi, 4197842						; "Finished back up "
   400c1f: 48 89 c7                     	mov	rdi, rax
   400c22: e8 9d fc ff ff               	call	 <log_wrapper>
   400c27: 48 8b 45 80                  	mov	rax, qword ptr [rbp - 128]
@@ -257,12 +306,5 @@ void log_wrapper(FILE *backup_file, char *param_2, char *filename)
 <L6>:
   400c56: c9                           	leave
   400c57: c3                           	ret
-  400c58: 90                           	nop
-  400c59: 90                           	nop
-  400c5a: 90                           	nop
-  400c5b: 90                           	nop
-  400c5c: 90                           	nop
-  400c5d: 90                           	nop
-  400c5e: 90                           	nop
-  400c5f: 90                           	nop
 */
+}
