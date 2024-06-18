@@ -153,6 +153,10 @@ void set_msg(struct source *source)
   9ce: 48 89 e5                     	mov	rbp, rsp
   9d1: 48 81 ec a0 00 00 00         	sub	rsp, 160
   9d8: 48 89 bd 68 ff ff ff         	mov	qword ptr [rbp - 152], rdi
+*/
+void set_username(struct source *param_1)
+{
+	/*
   9df: 48 8d 85 70 ff ff ff         	lea	rax, [rbp - 144]
   9e6: 48 89 c6                     	mov	rsi, rax
   9e9: b8 00 00 00 00               	mov	eax, 0
@@ -160,12 +164,23 @@ void set_msg(struct source *source)
   9f3: 48 89 f7                     	mov	rdi, rsi
   9f6: 48 89 d1                     	mov	rcx, rdx
   9f9: f3 48 ab                     	rep		stosq	qword ptr es:[rdi], rax
+	*/
+	char buffer[136] = {0};
+	int i;
+
+	/*
   9fc: 48 8d 3d e1 01 00 00         	lea	rdi,  0xbe4							; ">: Enter your username"
   a03: e8 28 fd ff ff               	call	 <puts@plt>
+	*/
+	puts(">: Enter your username");
+	/*
   a08: 48 8d 05 d0 01 00 00         	lea	rax,  0xbdf							; ">>: "
   a0f: 48 89 c7                     	mov	rdi, rax
   a12: b8 00 00 00 00               	mov	eax, 0
   a17: e8 34 fd ff ff               	call	 <printf@plt>
+	*/
+	printf(">>: ");
+	/*
   a1c: 48 8b 05 95 15 20 00         	mov	rax, qword ptr  0x201fb8			; stdin
   a23: 48 8b 00                     	mov	rax, qword ptr [rax]
   a26: 48 89 c2                     	mov	rdx, rax
@@ -173,6 +188,9 @@ void set_msg(struct source *source)
   a30: be 80 00 00 00               	mov	esi, 128
   a35: 48 89 c7                     	mov	rdi, rax
   a38: e8 33 fd ff ff               	call	 <fgets@plt>
+	*/
+	fgets(buffer, 128, stdin);
+	/*
   a3d: c7 45 fc 00 00 00 00         	mov	dword ptr [rbp - 4], 0
   a44: eb 24                        	jmp	 <L0>
 <L2>:
@@ -192,6 +210,12 @@ void set_msg(struct source *source)
   a75: 0f b6 84 05 70 ff ff ff      	movzx	eax, byte ptr [rbp + rax - 144]
   a7d: 84 c0                        	test	al, al
   a7f: 75 c5                        	jne	 <L2>
+	*/
+	for (i = 0; (i <= 40 && (buffer[i] != '\0')); i = i + 1)
+	{
+		param_1->username[i] = buffer[i];
+	}
+	/*
 <L1>:
   a81: 48 8b 85 68 ff ff ff         	mov	rax, qword ptr [rbp - 152]
   a88: 48 8d 90 8c 00 00 00         	lea	rdx, [rax + 140]
@@ -200,9 +224,15 @@ void set_msg(struct source *source)
   a99: 48 89 c7                     	mov	rdi, rax
   a9c: b8 00 00 00 00               	mov	eax, 0
   aa1: e8 aa fc ff ff               	call	 <printf@plt>
+	*/
+	printf(">: Welcome, %s", param_1->username);
+	/*
   aa6: c9                           	leave
   aa7: c3                           	ret
-*/
+	*/
+	return;
+}
+
 /*
 0000000000000aa8 <main>:
   aa8: 55                           	push	rbp
