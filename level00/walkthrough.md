@@ -1,6 +1,6 @@
 # Level 00
 
-Pour ce premier niveau, on nous donne un binaire, il va simple demande un mot de passe via `scanf` et check si le mot de passe est égal à `5276`.<br/>
+Pour ce premier niveau, on nous donne un binaire, il va simplement demander un mot de passe via `scanf` et vérifier que le mot de passe est égale à `5276`.<br/>
 Si ne n'est pas le cas il va afficher `Invalid Password!` et quitter le programme. Sinon il va afficher `Authenticated!` et exécuter la commande `/bin/sh`.<br/>
 
 ```asm
