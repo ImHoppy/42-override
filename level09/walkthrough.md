@@ -1,13 +1,14 @@
 # Level 09
 
-Le programme lit de 128 charactère et boucle de 0 jusqu'à 40 **compris** (<=) en copiant chaque charactère du buffer dans la structure de taille 40, mais comme il copie 40 compris il dépasse le buffer dans la structure et écrit dans la prochaine variable nommée `message_size` si notre username fait plus de 40.
+Le programme lit 128 caractères et boucle de 0 à 40 **compris** (<=). Il copie chaque charactère du buffer dans le buffer de la structure taille 40. Si notre username fait plus de 40 caractères, il dépasse le buffer et écrit dans la prochaine variable nommée `message_size`.
 
-Ensuite il lit de 1024 et assigne d'une taille donné dans `message_size` dans la variable `message` de la structure, sauf comme on l'a réecrit précédemment il va dépasser la taille de `message` de 140 et possiblement écrire dans la save rip.
+Ensuite, il lit 1024 octets et assigne une taille spécifiée dans `message_size` à la variable `message` de la structure. Cependant, comme nous l'avons mentionné précédemment, cela va dépasser la taille de `message` de 140 octets et potentiellement écraser la sauvegarde de l'adresse de retour (saved RIP).
 
-En première lieu on donne un username contenant 255 d'une taille de 41 pour écrire 255 dans `message_size`.
+En premier lieu on donne un username d'une taille de 41 avec 255 au 41ème caractère pour écrire dans `message_size`.
 Puis écrire l'addresse de la fonction `secret_backdoor` (0x000055555555488c).
 
-Pour trouver l'offset d'rip on va lancer gdb et remplire notre message de 42, après l'appel de strncpy on peut afficher l'addresse du `message` (0x7fffffffe440) et regarde où est stoqué rip (rip at 0x7fffffffe508). DOnt on peut soustraire les deux addresse pour voir combien on doit écrire.
+Pour trouver l'offset de `rip` on va lancer gdb et remplir notre message de 42, après l'appel de strncpy on peut afficher l'adresse du `message` (0x7fffffffe440) et regarder où est stocké `rip` (rip at 0x7fffffffe508). On peut soustraire les deux adressses pour voir combien on doit écrire.
+
 ```
 (gdb) x/32xg $rbp-192
 0x7fffffffe440: 0x4242424242424242      0x4242424242424242
@@ -30,8 +31,9 @@ $1 = 200
 ```
 
  - 0xff comme username
- - L'offset de 200 et l'address `secret_backdoor`
+ - Un offset de 200 et l'adresse de `secret_backdoor`
  - Réouvrire la stdin
+
 ```bash
 ( \
 	python -c 'print("\xff"*41)'; \

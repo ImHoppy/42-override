@@ -1,6 +1,6 @@
 # Level06
 
-Ici un appel a ptrace détecte gdb:
+Ici un appel à ptrace est effectué:
 ```
 level06@OverRide:~$ gdb ./level06
 GNU gdb (Ubuntu/Linaro 7.4-2012.04-0ubuntu2.1) 7.4-2012.04
@@ -29,11 +29,10 @@ Starting program: /home/users/level06/level06
 [Inferior 1 (process 2279) exited with code 01]
 ```
 
-On va donc mettre un breakpoint a l'instruction
-suivante pour modifier la valeur de eax et contourner ce bloquage.
+On va donc mettre un breakpoint à l'instruction
+suivante pour modifier la valeur de `eax` et contourner ce bloquage.
 
-Lancer le programme avec gdb, mettre un break point sur ptrace que le trouve en
-désassemblant le main et la fonction auth appelé a l'intérieur.
+Lancer le programme avec gdb, mettre un break point sur ptrace et sur la fonction auth.
 
 ```
 (gdb) disass auth
@@ -103,7 +102,7 @@ which has no line number information.
 The program is not being run.
 ```
 
-On place ensuite un break aux endroits ou le programme modifie notre buffer pour comprendre ce qu'il en fait:
+On place ensuite un break point aux endroits où le programme modifie notre buffer pour comprendre ce qu'il en fait:
 ```
  0x080487b5 <+109>:   call   0x80485f0 <ptrace@plt>
    0x080487ba <+114>:   cmp    $0xffffffff,%eax
@@ -213,8 +212,8 @@ fs             0x0      0
 gs             0x63     99
 ```
 
-On réalise l'encryption sur le 4eme char du buffer pour avoir la valeur de depart
-qui sera écrasé a chaque tour de boucle pour produire le résultat final.
+On réalise l'encryption sur le 4ème char du buffer pour avoir la valeur de départ
+qui sera écrasée à chaque tour de boucle pour produire le résultat final.
 
 ```
 $ python
@@ -227,10 +226,10 @@ Type "help", "copyright", "credits" or "license" for more information.
 6226274
 ```
 
-Maintenant nous pouvons lancer notre script python présent dans le dossier resources
-qui fera autant de tour de boucle que la taille de la chaine pour reproduire le meme 
+Maintenant nous pouvons lancer notre [script python](./resources/decrypt.py)
+qui fera autant de tour de boucle que la taille de la chaîne afin de reproduire le même 
 comportement que le programme.
-Celui ci nous fournis le serial number pour le login "BBBBBB"
+Celui-ci nous fournit le `serial number` pour le login "BBBBBB"
 
 ```
 $ ./decrypt.py
