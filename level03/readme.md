@@ -1,6 +1,6 @@
 # Level03
 
-Quand on exécute le programme, il nous demande un mot de pass`t nous affiche `Invalid Password`. Il faut donc trouver ce mot de passe.
+Quand on exécute le programme, il nous demande un mot de passe. Il faut donc trouver ce mot de passe.
 ```
 $ ./level03
 ***********************************
