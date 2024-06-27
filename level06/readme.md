@@ -3,16 +3,6 @@
 Ici un appel à ptrace est effectué:
 ```
 level06@OverRide:~$ gdb ./level06
-GNU gdb (Ubuntu/Linaro 7.4-2012.04-0ubuntu2.1) 7.4-2012.04
-Copyright (C) 2012 Free Software Foundation, Inc.
-License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
-This is free software: you are free to change and redistribute it.
-There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
-and "show warranty" for details.
-This GDB was configured as "x86_64-linux-gnu".
-For bug reporting instructions, please see:
-<http://bugs.launchpad.net/gdb-linaro/>...
-Reading symbols from /home/users/level06/level06...(no debugging symbols found)...done.
 (gdb) r
 Starting program: /home/users/level06/level06
 ***********************************
@@ -70,16 +60,6 @@ Dump of assembler code for function auth:
 
 ```
 level06@OverRide:~$ gdb ./level06
-GNU gdb (Ubuntu/Linaro 7.4-2012.04-0ubuntu2.1) 7.4-2012.04
-Copyright (C) 2012 Free Software Foundation, Inc.
-License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
-This is free software: you are free to change and redistribute it.
-There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
-and "show warranty" for details.
-This GDB was configured as "x86_64-linux-gnu".
-For bug reporting instructions, please see:
-<http://bugs.launchpad.net/gdb-linaro/>...
-Reading symbols from /home/users/level06/level06...(no debugging symbols found)...done.
 (gdb) b *0x080487ba
 Breakpoint 1 at 0x80487ba
 (gdb) r
@@ -94,12 +74,8 @@ Starting program: /home/users/level06/level06
 -> Enter Serial: 0
 
 Breakpoint 1, 0x080487ba in auth ()
-(gdb) s
-Single stepping until exit from function auth,
-which has no line number information.
-[Inferior 1 (process 2273) exited with code 01]
-(gdb) c
-The program is not being run.
+(gdb) p $eax=0
+$1 = 0
 ```
 
 On place ensuite un break point aux endroits où le programme modifie notre buffer pour comprendre ce qu'il en fait:
@@ -217,9 +193,6 @@ qui sera écrasée à chaque tour de boucle pour produire le résultat final.
 
 ```
 $ python
-Python 2.7.18 (default, Jul  1 2022, 12:27:04)
-[GCC 9.4.0] on linux2
-Type "help", "copyright", "credits" or "license" for more information.
 >>> ord("B") ^ 0x1337
 4981
 >>> 4981 + 0x5eeded
@@ -227,7 +200,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 ```
 
 Maintenant nous pouvons lancer notre [script python](./resources/decrypt.py)
-qui fera autant de tour de boucle que la taille de la chaîne afin de reproduire le même 
+qui fera autant de tour de boucle que la taille de la chaîne afin de reproduire le même
 comportement que le programme.
 Celui-ci nous fournit le `serial number` pour le login "BBBBBB"
 
